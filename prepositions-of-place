@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fun English Practice</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Quicksand for kid-friendly UI -->
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(135deg, #fef08a 0%, #dbeafe 100%);
+    }
+    .letter-slot {
+      aspect-ratio: 1/1;
+    }
+    .bounce-in {
+      animation: bounceIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes bounceIn {
+      0% { transform: scale(0.3); opacity: 0; }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-4 md:p-8">
+
+  <!-- Main Game Container -->
+  <div class="w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden border-4 border-blue-200 flex flex-col justify-between min-h-[85vh]">
+    
+    <!-- Top Progress Bar & Score Board -->
+    <div class="bg-blue-500 p-4 md:p-6 text-white flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <span class="bg-yellow-400 text-blue-900 font-bold px-4 py-1.5 rounded-full text-sm shadow">
+          Part <span id="current-part">1</span>
+        </span>
+        <h1 class="text-xl md:text-2xl font-bold tracking-wide">Fun English Quest!</h1>
+      </div>
+      
+      <!-- Stats / Progress Circle -->
+      <div class="flex items-center space-x-6 text-sm md:text-base">
+        <div class="flex items-center space-x-2">
+          <span>Progress:</span>
+          <div class="w-24 bg-blue-700 rounded-full h-3 overflow-hidden">
+            <div id="progress-bar" class="bg-yellow-300 h-full transition-all duration-500" style="width: 0%"></div>
+          </div>
+          <span id="progress-text" class="font-semibold">0/0</span>
+        </div>
+        <div class="flex space-x-3 font-semibold">
+          <span class="text-green-300">✓ <span id="score-correct">0</span></span>
+          <span class="text-red-300">✗ <span id="score-incorrect">0</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen Content: Welcomes, Questions, Summaries -->
+    <div class="p-4 md:p-8 flex-grow flex flex-col justify-center items-center">
+      
+      <!-- WELCOME SCREEN -->
+      <div id="welcome-screen" class="text-center space-y-6 py-8 bounce-in">
+        <div class="text-6xl md:text-8xl">🎉</div>
+        <h2 class="text-3xl md:text-4xl font-bold text-blue-800">Welcome to English Practice!</h2>
+        <p class="text-gray-600 max-w-md mx-auto text-base md:text-lg">
+          Challenge yourself with word spelling and sentence builders. Let's make learning awesome!
+        </p>
+        <button id="start-btn" class="bg-green-500 hover:bg-green-600 active:scale-95 text-white font-bold text-xl px-10 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 transform">
+          Let's Start! 🚀
+        </button>
+      </div>
+
+      <!-- PLAYING SCREEN -->
+      <div id="play-screen" class="hidden w-full flex flex-col items-center space-y-6">
+        
+        <!-- Part 1 Content (Image Section) -->
+        <div id="image-container" class="w-full max-w-sm bg-blue-50 p-4 rounded-2xl border-2 border-blue-100 flex items-center justify-center relative shadow-inner min-h-[220px]">
+          <!-- Dynamic Image or Fallback Emoji -->
+          <img id="question-image" src="" alt="Vocabulary Image" class="max-h-[200px] object-contain rounded-xl transition-all duration-300">
+          <div id="emoji-fallback" class="hidden text-8xl transition-all duration-300">❓</div>
+        </div>
+
+        <!-- TTS Controls & Hints -->
+        <div class="flex items-center space-x-3">
+          <button id="audio-btn" class="bg-yellow-400 hover:bg-yellow-500 text-blue-950 font-semibold px-5 py-2.5 rounded-full flex items-center space-x-2 shadow active:scale-95 transition-all">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M12 18.75V5.25L7.75 9.5H4.5v5h3.25L12 18.75z" />
+            </svg>
+            <span>Listen</span>
+          </button>
+          <div id="attempt-indicator" class="text-sm font-semibold px-4 py-2 bg-amber-50 text-amber-700 border border-amber-200 rounded-full">
+            Attempts Left: <span id="tries-left">3</span>
+          </div>
+        </div>
+
+        <!-- Answers Slot Area -->
+        <div class="w-full flex flex-col items-center py-4">
+          <div id="slots-area" class="flex flex-wrap justify-center gap-2 md:gap-3 w-full max-w-3xl">
+            <!-- Dynamically populated slots -->
+          </div>
+        </div>
+
+        <!-- Scrambled Options Area -->
+        <div class="w-full flex flex-col items-center bg-gray-50 p-4 md:p-6 rounded-2xl border border-gray-100">
+          <p class="text-xs text-gray-400 uppercase tracking-wider mb-3">Your Options (Click to select)</p>
+          <div id="options-area" class="flex flex-wrap justify-center gap-2 md:gap-3">
+            <!-- Dynamically populated options -->
+          </div>
+        </div>
+
+        <!-- Control Action Buttons -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 w-full pt-4">
+          <button id="check-btn" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg px-8 py-3.5 rounded-xl shadow-lg active:scale-95 transition-all">
+            Check Answer (Enter)
+          </button>
+          <button id="next-btn" class="hidden w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white font-bold text-lg px-8 py-3.5 rounded-xl shadow-lg active:scale-95 transition-all bounce-in">
+            Next Question ➔
+          </button>
+        </div>
+
+        <!-- Feedback Messages -->
+        <div id="feedback-toast" class="opacity-0 transition-opacity duration-300 text-center py-2 px-6 rounded-full font-bold text-lg shadow-md">
+          Feedback Message
+        </div>
+
+        <!-- Reveal Correct Answer (when tries fail) -->
+        <div id="solution-banner" class="hidden w-full bg-red-50 border-2 border-red-200 p-4 rounded-xl text-center">
+          <span class="text-red-700 font-semibold block">Keep practicing! The correct answer is:</span>
+          <span id="solution-text" class="text-2xl font-bold text-red-900 tracking-wide uppercase">ANSWER</span>
+        </div>
+
+      </div>
+
+      <!-- SUMMARY SCREEN -->
+      <div id="summary-screen" class="hidden w-full max-w-md text-center space-y-6 py-8 bounce-in">
+        <div class="text-7xl">🏆</div>
+        <h2 class="text-3xl font-bold text-blue-800">Challenge Completed!</h2>
+        <p class="text-gray-500 text-lg">Amazing effort! Here is your final scorecard:</p>
+        
+        <!-- Score Card UI -->
+        <div class="bg-blue-50 border-2 border-blue-100 p-6 rounded-2xl space-y-4">
+          <div class="flex justify-between border-b pb-2">
+            <span class="text-gray-600">Total Correct:</span>
+            <span id="final-correct" class="font-bold text-green-600 text-xl">0</span>
+          </div>
+          <div class="flex justify-between border-b pb-2">
+            <span class="text-gray-600">Total Incorrect:</span>
+            <span id="final-incorrect" class="font-bold text-red-500 text-xl">0</span>
+          </div>
+          <div class="flex justify-between font-bold text-lg">
+            <span>Accuracy Rate:</span>
+            <span id="final-accuracy" class="text-blue-700">0%</span>
+          </div>
+        </div>
+
+        <button id="restart-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xl px-10 py-4 rounded-2xl shadow-lg active:scale-95 transition-all w-full">
+          Play Again 🔄
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Footer Notes -->
+    <div class="bg-gray-50 p-4 border-t border-gray-100 text-center text-xs text-gray-400">
+      Interactive Spelling & Sentence Builder • Supports keyboard typing for Spelling Quest.
+    </div>
+
+  </div>
+
+  <script>
+    // Audio synthesis setup for sound effects
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function playSound(type) {
+      if (!audioCtx) return;
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      if (type === 'success') {
+        // Upbeat pleasant major triad
+        const now = audioCtx.currentTime;
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(523.25, now); // C5
+        osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+        osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+        osc.frequency.setValueAtTime(1046.50, now + 0.3); // C6
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+        osc.start(now);
+        osc.stop(now + 0.5);
+      } else if (type === 'fail') {
+        // Dissolving sliding low pitch buzzer
+        const now = audioCtx.currentTime;
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, now); // A3
+        osc.frequency.exponentialRampToValueAtTime(110, now + 0.4); // A2
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+        osc.start(now);
+        osc.stop(now + 0.4);
+      } else if (type === 'click') {
+        // Soft click
+        const now = audioCtx.currentTime;
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, now);
+        gain.gain.setValueAtTime(0.1, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+        osc.start(now);
+        osc.stop(now + 0.08);
+      }
+    }
+
+    // Vocabulary lists and Sentences
+    const part1Vocab = [
+      { word: "in", emoji: "📥", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNF31UVZX9c2rwLAdu0EUaWgXdxYisZpLRNAEFY2-BFDlvK55mVFCJ4lMp&s=10?w=600&auto=format&fit=crop&q=80" },
+      { word: "on", emoji: "🔛", img: "https://media.baamboozle.com/uploads/images/156912/1647154242_66896.png?w=600&auto=format&fit=crop&q=80" },
+      { word: "under", emoji: "👇", img: "https://voca-land.sgp1.cdn.digitaloceanspaces.com/0/1757652180409/befdb826.jpg?w=600&auto=format&fit=crop&q=80" },
+      { word: "next to", emoji: "➡️", img: "https://media.baamboozle.com/uploads/images/2258666/d71b9da6-75fe-4ab5-84b7-565c62b22204.jpeg?w=600&auto=format&fit=crop&q=80" },
+      { word: "behind", emoji: "👤", img: "https://media.baamboozle.com/uploads/images/1543826/c2179db0-9697-43bf-a73a-42e40c8a71dc.png?w=600&auto=format&fit=crop&q=80" },
+      { word: "in front of", emoji: "👥", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRaVlx2CXKPxLfw2JVP_t199tSAWF4v77ZQ2WkPlEmPKA&s=10?w=600&auto=format&fit=crop&q=80" },
+      { word: "between", emoji: "↔️", img: "https://lh7-rt.googleusercontent.com/docsz/AD_4nXcwXlNyjmvBk0-kDK941Pb8HaJqQqcQOnA_3TBr3xK4HJ9OJ8SJoo6nb6n9m9N1JCyTWpGc_gq-4I1oaVtV6y3b1LVMmED0-ZnL5f85AOjTWir95-0SqKWXrn_RZ2ywLV02TgnFzLpu6zQq1tBSrwhCW3oa?key=1gJ5B36oT0f3Zl5TQUmtdA?w=600&auto=format&fit=crop&q=80" },
+      { word: "chalk", emoji: "🖍️", img: "https://images.unsplash.com/photo-1581078426770-6d336e5de7bf?w=600&auto=format&fit=crop&q=80" },
+      { word: "basket", emoji: "🧺", img: "https://images.unsplash.com/photo-1595341821816-424b3b3a302a?w=600&auto=format&fit=crop&q=80" },
+      { word: "box", emoji: "📦"},
+      { word: "pig", emoji: "🐷", img: "https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=600&auto=format&fit=crop&q=80" }
+    ];
+
+    const part2Sentences = [
+      { text: "The cat is on the window" },
+      { text: "The food is in the basket" },
+      { text: "The TV is behind the box" },
+      { text: "The umbrella is in front of the baby" },
+      { text: "The apples are between the books" },
+      { text: "The lion is under the bed" },
+      { text: "The leaves are next to the trees" },
+      { text: "The zebras are behind the elephants" },
+      { text: "The lamp is next to the guitar" }
+    ];
+
+    // Praise options
+    const praises = ["Well done", "Good job", "Excellent", "Very good"];
+
+    // App State
+    let state = {
+      currentPart: 1, // 1 or 2
+      questions: [],  // Scrambled list of questions
+      currentIndex: 0,
+      currentTries: 3,
+      correctCount: 0,
+      incorrectCount: 0,
+      
+      // Part 1 specific state (Spelling)
+      targetWord: "",
+      scrambledLetters: [], // { id, char, used }
+      userSlots: [],        // { type: 'letter'|'space', value: char|null, letterObjId: num|null }
+
+      // Part 2 specific state (Sentence builder)
+      targetWords: [],      // Array of words
+      scrambledWords: [],   // { id, word, used }
+      userWordSlots: [],    // { value: string|null, wordObjId: num|null }
+      
+      isAnswerChecked: false
+    };
+
+    // DOM Elements
+    const elWelcomeScreen = document.getElementById('welcome-screen');
+    const elPlayScreen = document.getElementById('play-screen');
+    const elSummaryScreen = document.getElementById('summary-screen');
+    
+    const elStartBtn = document.getElementById('start-btn');
+    const elRestartBtn = document.getElementById('restart-btn');
+    const elAudioBtn = document.getElementById('audio-btn');
+    const elCheckBtn = document.getElementById('check-btn');
+    const elNextBtn = document.getElementById('next-btn');
+
+    const elCurrentPart = document.getElementById('current-part');
+    const elProgressBar = document.getElementById('progress-bar');
+    const elProgressText = document.getElementById('progress-text');
+    const elScoreCorrect = document.getElementById('score-correct');
+    const elScoreIncorrect = document.getElementById('score-incorrect');
+
+    const elImageContainer = document.getElementById('image-container');
+    const elQuestionImage = document.getElementById('question-image');
+    const elEmojiFallback = document.getElementById('emoji-fallback');
+    const elTriesLeft = document.getElementById('tries-left');
+    const elSlotsArea = document.getElementById('slots-area');
+    const elOptionsArea = document.getElementById('options-area');
+    const elFeedbackToast = document.getElementById('feedback-toast');
+    const elSolutionBanner = document.getElementById('solution-banner');
+    const elSolutionText = document.getElementById('solution-text');
+
+    const elFinalCorrect = document.getElementById('final-correct');
+    const elFinalIncorrect = document.getElementById('final-incorrect');
+    const elFinalAccuracy = document.getElementById('final-accuracy');
+
+    // Shuffle Array utility
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // TTS speak function
+    function speak(text, slow = true) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel(); // Stop any pending speech
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = slow ? 0.75 : 0.9;
+        utterance.pitch = 1.25; // Slightly high-pitched/friendly female child-like tone
+        
+        // Pick female voice if available
+        const voices = window.speechSynthesis.getVoices();
+        const femaleVoice = voices.find(voice => 
+          voice.name.includes('Google US English') || 
+          voice.name.includes('Zira') || 
+          voice.name.includes('Samantha') || 
+          voice.lang.startsWith('en')
+        );
+        if (femaleVoice) {
+          utterance.voice = femaleVoice;
+        }
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    // Initialize Game setup
+    function initGame() {
+      state.currentPart = 1;
+      state.correctCount = 0;
+      state.incorrectCount = 0;
+      state.currentIndex = 0;
+      state.currentTries = 3;
+      state.isAnswerChecked = false;
+
+      // Prepare random order questions for Part 1
+      state.questions = shuffleArray(part1Vocab);
+
+      updateStatsUI();
+      showScreen('welcome');
+    }
+
+    function startPractice() {
+      showScreen('play');
+      loadQuestion();
+    }
+
+    function showScreen(screen) {
+      elWelcomeScreen.classList.add('hidden');
+      elPlayScreen.classList.add('hidden');
+      elSummaryScreen.classList.add('hidden');
+
+      if (screen === 'welcome') elWelcomeScreen.classList.remove('hidden');
+      if (screen === 'play') elPlayScreen.classList.remove('hidden');
+      if (screen === 'summary') elSummaryScreen.classList.remove('hidden');
+    }
+
+    function updateStatsUI() {
+      elCurrentPart.innerText = state.currentPart;
+      elScoreCorrect.innerText = state.correctCount;
+      elScoreIncorrect.innerText = state.incorrectCount;
+      
+      const totalPartQs = state.questions.length;
+      const progressPercent = (state.currentIndex / totalPartQs) * 100;
+      elProgressBar.style.width = `${progressPercent}%`;
+      elProgressText.innerText = `${state.currentIndex}/${totalPartQs}`;
+      elTriesLeft.innerText = state.currentTries;
+    }
+
+    // Set up dynamic visual fallback for image errors
+    function setupImageSource(src, fallbackEmoji) {
+      elQuestionImage.classList.remove('hidden');
+      elEmojiFallback.classList.add('hidden');
+      elQuestionImage.src = src;
+      
+      elQuestionImage.onerror = () => {
+        elQuestionImage.classList.add('hidden');
+        elEmojiFallback.innerText = fallbackEmoji;
+        elEmojiFallback.classList.remove('hidden');
+      };
+    }
+
+    // Load question logic based on current part
+    function loadQuestion() {
+      state.currentTries = 3;
+      state.isAnswerChecked = false;
+      elCheckBtn.classList.remove('hidden');
+      elNextBtn.classList.add('hidden');
+      elSolutionBanner.classList.add('hidden');
+      hideToast();
+      updateStatsUI();
+
+      const currentQ = state.questions[state.currentIndex];
+
+      if (state.currentPart === 1) {
+        // Spelling Word Mode
+        elImageContainer.classList.remove('hidden');
+        setupImageSource(currentQ.img, currentQ.emoji);
+        
+        state.targetWord = currentQ.word;
+        
+        // Prepare slots (including gaps for spaces)
+        state.userSlots = [];
+        for (let i = 0; i < state.targetWord.length; i++) {
+          const char = state.targetWord[i];
+          if (char === ' ') {
+            state.userSlots.push({ type: 'space' });
+          } else {
+            state.userSlots.push({ type: 'letter', value: null, letterObjId: null });
+          }
+        }
+
+        // Filter out spaces for scrambled options
+        const lettersOnly = state.targetWord.replace(/\s+/g, '').split('');
+        state.scrambledLetters = shuffleArray(lettersOnly).map((char, index) => ({
+          id: index,
+          char: char,
+          used: false
+        }));
+
+        renderSpellingUI();
+        speak(state.targetWord);
+
+      } else {
+        // Sentence Building Mode
+        elImageContainer.classList.add('hidden'); // Hide part 1 image
+
+        state.targetWords = currentQ.text.split(' ');
+        
+        // Initialize user blanks corresponding to sentence words
+        state.userWordSlots = state.targetWords.map(() => ({
+          value: null,
+          wordObjId: null
+        }));
+
+        // Scramble words
+        state.scrambledWords = shuffleArray(state.targetWords).map((word, index) => ({
+          id: index,
+          word: word,
+          used: false
+        }));
+
+        renderSentenceUI();
+        speak(currentQ.text);
+      }
+    }
+
+    // --- RENDER FUNCTIONS ---
+
+    // Spelling UI
+    function renderSpellingUI() {
+      // Render Slots
+      elSlotsArea.innerHTML = '';
+      state.userSlots.forEach((slot, idx) => {
+        if (slot.type === 'space') {
+          // Spacer element
+          const spacer = document.createElement('div');
+          spacer.className = "w-4 md:w-8";
+          elSlotsArea.appendChild(spacer);
+        } else {
+          const btn = document.createElement('button');
+          btn.className = `w-10 h-10 md:w-14 md:h-14 bg-blue-100 text-blue-900 font-bold text-lg md:text-2xl rounded-xl border-b-4 border-blue-300 flex items-center justify-center shadow transition-all duration-150 focus:outline-none ${slot.value ? 'bg-yellow-100 border-yellow-300 hover:bg-yellow-200' : 'hover:bg-blue-200'}`;
+          btn.innerText = slot.value ? slot.value.toUpperCase() : '';
+          
+          if (slot.value && !state.isAnswerChecked) {
+            btn.onclick = () => removeLetter(idx);
+          }
+          elSlotsArea.appendChild(btn);
+        }
+      });
+
+      // Render Scrambled Options
+      elOptionsArea.innerHTML = '';
+      state.scrambledLetters.forEach((letter) => {
+        const btn = document.createElement('button');
+        
+        if (letter.used) {
+          btn.className = "w-10 h-10 md:w-14 md:h-14 bg-gray-200 text-transparent font-bold text-lg md:text-2xl rounded-xl border-b-4 border-gray-300 flex items-center justify-center cursor-default opacity-40 select-none";
+          btn.innerText = letter.char.toUpperCase();
+          btn.disabled = true;
+        } else {
+          btn.className = "w-10 h-10 md:w-14 md:h-14 bg-white text-blue-950 font-bold text-lg md:text-2xl rounded-xl border-b-4 border-blue-400 flex items-center justify-center shadow-md hover:shadow-lg active:scale-95 active:border-b-2 hover:bg-blue-50 transition-all duration-150 bounce-in focus:outline-none";
+          btn.innerText = letter.char.toUpperCase();
+          if (!state.isAnswerChecked) {
+            btn.onclick = () => selectLetter(letter);
+          }
+        }
+        elOptionsArea.appendChild(btn);
+      });
+    }
+
+    // Sentence UI
+    function renderSentenceUI() {
+      // Render Slots
+      elSlotsArea.innerHTML = '';
+      state.userWordSlots.forEach((slot, idx) => {
+        const btn = document.createElement('button');
+        btn.className = `px-4 py-2.5 min-h-[50px] min-w-[80px] text-base md:text-lg font-bold rounded-xl border-b-4 flex items-center justify-center shadow transition-all duration-150 focus:outline-none ${slot.value ? 'bg-yellow-100 text-blue-900 border-yellow-300 hover:bg-yellow-200' : 'bg-blue-100 border-blue-300 hover:bg-blue-200 text-transparent'}`;
+        btn.innerText = slot.value ? slot.value : '____';
+        
+        if (slot.value && !state.isAnswerChecked) {
+          btn.onclick = () => removeWord(idx);
+        }
+        elSlotsArea.appendChild(btn);
+      });
+
+      // Render Scrambled Options
+      elOptionsArea.innerHTML = '';
+      state.scrambledWords.forEach((wordObj) => {
+        const btn = document.createElement('button');
+        
+        if (wordObj.used) {
+          btn.className = "px-4 py-2.5 bg-gray-200 text-transparent font-bold text-base md:text-lg rounded-xl border-b-4 border-gray-300 flex items-center justify-center cursor-default opacity-40 select-none";
+          btn.innerText = wordObj.word;
+          btn.disabled = true;
+        } else {
+          btn.className = "px-4 py-2.5 bg-white text-blue-950 font-bold text-base md:text-lg rounded-xl border-b-4 border-blue-400 flex items-center justify-center shadow-md hover:shadow-lg active:scale-95 active:border-b-2 hover:bg-blue-50 transition-all duration-150 bounce-in focus:outline-none";
+          btn.innerText = wordObj.word;
+          if (!state.isAnswerChecked) {
+            btn.onclick = () => selectWord(wordObj);
+          }
+        }
+        elOptionsArea.appendChild(btn);
+      });
+    }
+
+    // --- INTERACTIVE ACTIONS ---
+
+    // Select Letter (Part 1)
+    function selectLetter(letterObj) {
+      // Find first empty non-space slot
+      const emptySlotIndex = state.userSlots.findIndex(slot => slot.type === 'letter' && slot.value === null);
+      if (emptySlotIndex !== -1) {
+        playSound('click');
+        state.userSlots[emptySlotIndex].value = letterObj.char;
+        state.userSlots[emptySlotIndex].letterObjId = letterObj.id;
+        letterObj.used = true;
+        renderSpellingUI();
+      }
+    }
+
+    // Remove Letter (Part 1)
+    function removeLetter(slotIdx) {
+      playSound('click');
+      const slot = state.userSlots[slotIdx];
+      const targetLetter = state.scrambledLetters.find(l => l.id === slot.letterObjId);
+      if (targetLetter) {
+        targetLetter.used = false;
+      }
+      slot.value = null;
+      slot.letterObjId = null;
+      renderSpellingUI();
+    }
+
+    // Select Word (Part 2)
+    function selectWord(wordObj) {
+      const emptySlotIndex = state.userWordSlots.findIndex(slot => slot.value === null);
+      if (emptySlotIndex !== -1) {
+        playSound('click');
+        state.userWordSlots[emptySlotIndex].value = wordObj.word;
+        state.userWordSlots[emptySlotIndex].wordObjId = wordObj.id;
+        wordObj.used = true;
+        renderSentenceUI();
+      }
+    }
+
+    // Remove Word (Part 2)
+    function removeWord(slotIdx) {
+      playSound('click');
+      const slot = state.userWordSlots[slotIdx];
+      const targetWordObj = state.scrambledWords.find(w => w.id === slot.wordObjId);
+      if (targetWordObj) {
+        targetWordObj.used = false;
+      }
+      slot.value = null;
+      slot.wordObjId = null;
+      renderSentenceUI();
+    }
+
+    // Keydown Listener (PC Support for Part 1)
+    window.addEventListener('keydown', (e) => {
+      if (state.currentPart !== 1 || state.isAnswerChecked) return;
+
+      const pressedChar = e.key.toLowerCase();
+
+      // Handle simple text character entries
+      if (/^[a-z ]$/.test(pressedChar)) {
+        // If it's a space, check if current cursor is on space slot
+        const emptySlotIndex = state.userSlots.findIndex(slot => slot.value === null && slot.type === 'letter');
+        
+        // Find unused letter corresponding to pressed char
+        const availableLetter = state.scrambledLetters.find(l => l.char === pressedChar && !l.used);
+        if (availableLetter) {
+          selectLetter(availableLetter);
+        }
+      }
+
+      // Backspace to delete last filled slot
+      if (e.key === 'Backspace') {
+        e.preventDefault();
+        // Find last filled letter slot
+        let lastFilledIdx = -1;
+        for (let i = state.userSlots.length - 1; i >= 0; i--) {
+          if (state.userSlots[i].type === 'letter' && state.userSlots[i].value !== null) {
+            lastFilledIdx = i;
+            break;
+          }
+        }
+        if (lastFilledIdx !== -1) {
+          removeLetter(lastFilledIdx);
+        }
+      }
+
+      // Enter to check answer
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        checkCurrentAnswer();
+      }
+    });
+
+    // Enter listener for Part 2 Sentence building or Transition
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        if (state.isAnswerChecked) {
+          // If already checked, proceed to next
+          goToNextQuestion();
+        } else if (state.currentPart === 2) {
+          // Check answer in part 2
+          checkCurrentAnswer();
+        }
+      }
+    });
+
+    // --- CHECK ANSWER & EVALUATION LOGIC ---
+
+    function checkCurrentAnswer() {
+      if (state.isAnswerChecked) return;
+
+      if (state.currentPart === 1) {
+        // Evaluate Spelling
+        const userWord = state.userSlots.map(slot => slot.type === 'space' ? ' ' : slot.value || '').join('');
+        const isCorrect = userWord.toLowerCase() === state.targetWord.toLowerCase();
+        
+        handleResult(isCorrect, state.targetWord);
+      } else {
+        // Evaluate Sentence
+        const userSentence = state.userWordSlots.map(slot => slot.value || '').join(' ').trim();
+        const correctSentence = state.questions[state.currentIndex].text;
+        const isCorrect = userSentence.toLowerCase() === correctSentence.toLowerCase();
+
+        handleResult(isCorrect, correctSentence);
+      }
+    }
+
+    function handleResult(isCorrect, correctStr) {
+      if (isCorrect) {
+        playSound('success');
+        state.correctCount++;
+        state.isAnswerChecked = true;
+
+        const praise = praises[Math.floor(Math.random() * praises.length)];
+        showToast(praise, 'success');
+        speak(praise, false);
+
+        elCheckBtn.classList.add('hidden');
+        elNextBtn.classList.remove('hidden');
+      } else {
+        playSound('fail');
+        state.currentTries--;
+        updateStatsUI();
+
+        if (state.currentTries > 0) {
+          showToast(`Oops! Try again. Attempts left: ${state.currentTries}`, 'error');
+          // Auto reset current puzzle input so student can try again
+          resetInput();
+        } else {
+          // No more attempts left -> Reveal correct answer
+          state.incorrectCount++;
+          state.isAnswerChecked = true;
+          showToast(`Not quite!`, 'error');
+          
+          elSolutionText.innerText = correctStr;
+          elSolutionBanner.classList.remove('hidden');
+
+          elCheckBtn.classList.add('hidden');
+          elNextBtn.classList.remove('hidden');
+        }
+      }
+    }
+
+    // Reset user answers back to scrambled area
+    function resetInput() {
+      if (state.currentPart === 1) {
+        state.scrambledLetters.forEach(l => l.used = false);
+        state.userSlots.forEach(s => {
+          if (s.type === 'letter') {
+            s.value = null;
+            s.letterObjId = null;
+          }
+        });
+        renderSpellingUI();
+      } else {
+        state.scrambledWords.forEach(w => w.used = false);
+        state.userWordSlots.forEach(s => {
+          s.value = null;
+          s.wordObjId = null;
+        });
+        renderSentenceUI();
+      }
+    }
+
+    // Go to Next question / Transition parts
+    function goToNextQuestion() {
+      state.currentIndex++;
+      const totalPartQs = state.questions.length;
+
+      if (state.currentIndex < totalPartQs) {
+        loadQuestion();
+      } else {
+        // Completed Part
+        if (state.currentPart === 1) {
+          // Move from Part 1 to Part 2
+          state.currentPart = 2;
+          state.currentIndex = 0;
+          state.questions = shuffleArray(part2Sentences);
+          showToast("Amazing! Let's build sentences next!", "success");
+          setTimeout(() => {
+            loadQuestion();
+          }, 1500);
+        } else {
+          // Completed game!
+          showSummary();
+        }
+      }
+    }
+
+    // Summary Screen UI
+    function showSummary() {
+      showScreen('summary');
+      elFinalCorrect.innerText = state.correctCount;
+      elFinalIncorrect.innerText = state.incorrectCount;
+      
+      const total = state.correctCount + state.incorrectCount;
+      const accuracy = total > 0 ? Math.round((state.correctCount / total) * 100) : 0;
+      elFinalAccuracy.innerText = `${accuracy}%`;
+    }
+
+    // UI Helper Toast Notifications
+    function showToast(message, type) {
+      elFeedbackToast.innerText = message;
+      elFeedbackToast.classList.remove('opacity-0', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800');
+      
+      if (type === 'success') {
+        elFeedbackToast.classList.add('bg-green-100', 'text-green-800');
+      } else {
+        elFeedbackToast.classList.add('bg-red-100', 'text-red-800');
+      }
+      elFeedbackToast.classList.add('opacity-100');
+    }
+
+    function hideToast() {
+      elFeedbackToast.classList.add('opacity-0');
+    }
+
+    // --- EVEN LISTENERS BINDING ---
+
+    elStartBtn.onclick = startPractice;
+    elRestartBtn.onclick = initGame;
+    
+    elAudioBtn.onclick = () => {
+      if (state.currentPart === 1) {
+        speak(state.targetWord);
+      } else {
+        speak(state.questions[state.currentIndex].text);
+      }
+    };
+
+    elCheckBtn.onclick = checkCurrentAnswer;
+    elNextBtn.onclick = goToNextQuestion;
+
+    // Run Initialization on Load
+    window.onload = () => {
+      initGame();
+      // Speak a friendly voice trigger on start so voices fetch nicely in browser cache
+      speak("Welcome to Fun English Quest!");
+    };
+  </script>
+</body>
+</html>
