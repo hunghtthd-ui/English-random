@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reading Exercise: Minh & Linh (MCQ)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .font-heading {
+            font-family: 'Fredoka', cursive, sans-serif;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .option-btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .option-btn:hover {
+            transform: translateY(-2px);
+        }
+        .option-btn:active {
+            transform: translateY(0);
+        }
+
+        @keyframes pulse-subtle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .pulse-active {
+            animation: pulse-subtle 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 h-screen overflow-hidden flex flex-col">
+
+    <!-- Top Header Bar -->
+    <header class="bg-indigo-600 text-white shadow-md flex-none z-20">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white/20 p-2 rounded-xl text-yellow-300">
+                    <i class="fa-solid fa-list-check text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-heading text-xl md:text-2xl font-bold tracking-wide">English Reading MCQ Practice</h1>
+                    <p class="text-xs text-indigo-200 hidden sm:block">Multiple Choice Exercise • Unit: Friends & Clothes</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+                <button id="reset-btn" class="bg-indigo-500 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center space-x-1 shadow-sm">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>Restart</span>
+                </button>
+                <div class="bg-indigo-700/80 px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-2">
+                    <span id="progress-badge" class="bg-amber-400 text-slate-900 px-2 py-0.5 rounded-full font-bold">0/10</span>
+                    <span class="hidden sm:inline">Completed</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Grid (Split Screen Layout) -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-2 sm:p-4 grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4 overflow-hidden h-[calc(100vh-60px)]">
+        
+        <!-- SECTION 1: Left Half - Picture (50% on desktop) -->
+        <section class="md:col-span-6 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full relative">
+            <div class="bg-slate-50 px-4 py-2 border-b border-slate-200 flex justify-between items-center flex-none">
+                <span class="font-heading font-semibold text-slate-700 text-sm flex items-center gap-2">
+                    <i class="fa-regular fa-image text-indigo-500"></i> Reference Illustration
+                </span>
+                <span class="text-xs text-slate-400 bg-slate-200 px-2 py-0.5 rounded-full">Minh & Linh</span>
+            </div>
+            
+            <div class="flex-1 p-2 sm:p-4 flex items-center justify-center bg-amber-50/30 overflow-auto custom-scrollbar relative">
+                <!-- Main Picture Container -->
+                <div class="w-full max-w-xl h-full flex flex-col justify-center items-center">
+                    <img id="main-illustration" 
+                         src="minh-linh.jpg" 
+                         alt="Minh and Linh Illustration" 
+                         class="w-full h-auto max-h-full object-contain rounded-xl shadow-md border border-slate-200 bg-white"
+                         onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'text-center p-6 bg-slate-100 rounded-xl border-2 border-dashed border-slate-300 text-slate-600\'><i class=\'fa-solid fa-image text-4xl mb-2 text-indigo-500\'></i><p class=\'font-bold text-sm\'>Image not found (Chưa thấy tệp ảnh)</p><p class=\'text-xs mt-1 text-slate-500\'>Hãy tải tệp ảnh tên <b>minh-linh.jpg</b> lên cùng thư mục với <b>index.html</b> trên GitHub.</p></div>';">
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Half Container (Split Top / Bottom) -->
+        <div class="md:col-span-6 flex flex-col gap-3 sm:gap-4 h-full overflow-hidden">
+            
+            <!-- SECTION 2: Right Top - Reading Passage -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-2/5 min-h-[160px]">
+                <div class="bg-indigo-50 px-4 py-2 border-b border-indigo-100 flex justify-between items-center flex-none">
+                    <span class="font-heading font-semibold text-indigo-900 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-book text-indigo-600"></i> Reading Passage
+                    </span>
+                    <button id="read-aloud-btn" class="text-xs bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-2.5 py-1 rounded-md font-medium transition flex items-center gap-1">
+                        <i class="fa-solid fa-volume-high"></i> Listen
+                    </button>
+                </div>
+                <div class="p-4 sm:p-5 overflow-y-auto custom-scrollbar bg-gradient-to-b from-white to-indigo-50/20 text-slate-700 text-base leading-relaxed">
+                    <p id="passage-text" class="font-normal text-sm sm:text-base tracking-wide text-slate-800">
+                        Hello everyone! My name is Minh. I'm 10 years old. This is my friend, Linh. She's 10 years old too. My coat is blue, but her coat is red. I like my white shirt and black shorts. She wears a pink skirt and long socks. I have black shoes, but her rain boots are yellow. My hat is big, but her bag is small.
+                    </p>
+                </div>
+            </section>
+
+            <!-- SECTION 3: Right Bottom - MCQ Questions Area -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-3/5 relative">
+                <!-- Mode Header -->
+                <div class="bg-slate-50 px-4 py-2.5 border-b border-slate-200 flex justify-between items-center flex-none">
+                    <div class="flex items-center gap-2">
+                        <span class="font-heading font-semibold text-slate-800 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-circle-question text-amber-500"></i> Multiple Choice
+                        </span>
+                        <span class="text-xs bg-indigo-100 text-indigo-800 font-medium px-2 py-0.5 rounded-full">Select Yes or No</span>
+                    </div>
+
+                    <div class="flex items-center gap-1 text-xs bg-slate-200 p-0.5 rounded-lg">
+                        <button id="view-card-btn" class="px-2.5 py-1 rounded-md bg-white text-indigo-600 font-medium shadow-xs">Step View</button>
+                        <button id="view-list-btn" class="px-2.5 py-1 rounded-md text-slate-600 font-medium hover:text-slate-900">List View</button>
+                    </div>
+                </div>
+
+                <!-- Content Area: MCQ Card Stepper View -->
+                <div id="card-mode-container" class="flex-1 p-4 sm:p-5 flex flex-col justify-between overflow-y-auto custom-scrollbar">
+                    
+                    <div>
+                        <!-- Stepper Progress Header -->
+                        <div class="flex justify-between items-center mb-2">
+                            <span id="current-q-num" class="text-xs font-bold text-indigo-600 uppercase tracking-wider">Question 1 of 10</span>
+                            <span id="feedback-badge" class="hidden text-xs font-bold px-2.5 py-1 rounded-full"></span>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="w-full bg-slate-100 h-2 rounded-full mb-4 overflow-hidden">
+                            <div id="quiz-progress-bar" class="bg-indigo-600 h-full w-10 transition-all duration-300"></div>
+                        </div>
+
+                        <!-- Question Text Card -->
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 sm:p-4 mb-4 min-h-[64px] flex items-center">
+                            <p id="active-question-text" class="text-base sm:text-lg font-semibold text-slate-800">
+                                Loading question...
+                            </p>
+                        </div>
+
+                        <!-- MCQ Options Container -->
+                        <div id="mcq-options-container" class="grid grid-cols-2 gap-3">
+                            <!-- Dynamically rendered Yes / No option buttons -->
+                        </div>
+                    </div>
+
+                    <!-- Stepper Footer Navigation -->
+                    <div class="flex justify-between items-center pt-3 border-t border-slate-100 mt-3">
+                        <button id="prev-q-btn" class="text-slate-500 hover:text-slate-800 text-sm font-medium px-3 py-1.5 rounded-lg hover:bg-slate-100 transition disabled:opacity-40 disabled:pointer-events-none">
+                            <i class="fa-solid fa-chevron-left mr-1"></i> Previous
+                        </button>
+
+                        <span class="text-xs text-slate-400 hidden sm:inline">Press <kbd class="px-1.5 py-0.5 bg-slate-100 border rounded font-mono">Y</kbd> (Yes) / <kbd class="px-1.5 py-0.5 bg-slate-100 border rounded font-mono">N</kbd> (No) or <kbd class="px-1.5 py-0.5 bg-slate-100 border rounded font-mono">Enter</kbd></span>
+
+                        <button id="next-q-btn" class="text-indigo-600 hover:text-indigo-800 text-sm font-semibold px-3 py-1.5 rounded-lg hover:bg-indigo-50 transition">
+                            Next <i class="fa-solid fa-chevron-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Alternative List View Container -->
+                <div id="list-mode-container" class="hidden flex-1 p-4 overflow-y-auto custom-scrollbar space-y-4">
+                    <div id="list-questions-wrapper" class="space-y-4">
+                        <!-- Shuffled list items rendered via JS -->
+                    </div>
+                    <div class="pt-3 pb-2 sticky bottom-0 bg-white">
+                        <button id="submit-all-list-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow-md transition">
+                            Submit All Answers
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Statistics / Results Modal Overlay -->
+                <div id="results-modal" class="hidden absolute inset-0 bg-slate-900/80 backdrop-blur-xs z-30 flex items-center justify-center p-4">
+                    <div class="bg-white rounded-2xl max-w-md w-full p-6 text-center shadow-2xl transform transition-all scale-100">
+                        <div id="modal-icon-container" class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+                            <i class="fa-solid fa-trophy"></i>
+                        </div>
+                        
+                        <h2 class="font-heading text-2xl font-bold text-slate-800 mb-1">Exercise Finished!</h2>
+                        <p class="text-xs text-slate-500 mb-6">Here is your total score summary</p>
+
+                        <!-- Score Cards -->
+                        <div class="grid grid-cols-3 gap-3 mb-6">
+                            <div class="bg-indigo-50 border border-indigo-100 p-3 rounded-xl">
+                                <span class="block text-2xl font-black text-indigo-600" id="stat-score">100%</span>
+                                <span class="text-[11px] font-semibold text-indigo-800 uppercase tracking-wider">Score</span>
+                            </div>
+                            <div class="bg-emerald-50 border border-emerald-100 p-3 rounded-xl">
+                                <span class="block text-2xl font-black text-emerald-600" id="stat-correct">10</span>
+                                <span class="text-[11px] font-semibold text-emerald-800 uppercase tracking-wider">Correct</span>
+                            </div>
+                            <div class="bg-rose-50 border border-rose-100 p-3 rounded-xl">
+                                <span class="block text-2xl font-black text-rose-600" id="stat-incorrect">0</span>
+                                <span class="text-[11px] font-semibold text-rose-800 uppercase tracking-wider">Incorrect</span>
+                            </div>
+                        </div>
+
+                        <div id="modal-feedback-msg" class="text-sm font-medium text-slate-700 mb-6 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                            Great job! You answered everything correctly.
+                        </div>
+
+                        <div class="flex gap-3">
+                            <button id="review-answers-btn" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 rounded-xl text-sm transition">
+                                Review
+                            </button>
+                            <button id="modal-restart-btn" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl text-sm shadow-md transition">
+                                Try Again
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+    <script>
+        // Master Multiple Choice Question List with Yes/No choices based on passage
+        const originalQuestions = [
+            {
+                id: 1,
+                text: "Minh is 10 years old.",
+                options: ["Yes", "No"],
+                correct: 0
+            },
+            {
+                id: 2,
+                text: "Minh and Linh are friends.",
+                options: ["Yes", "No"],
+                correct: 0
+            },
+            {
+                id: 3,
+                text: "Minh's coat is red.",
+                options: ["Yes", "No"],
+                correct: 1
+            },
+            {
+                id: 4,
+                text: "Linh's coat is blue.",
+                options: ["Yes", "No"],
+                correct: 1
+            },
+            {
+                id: 5,
+                text: "Minh likes his white shirt and black shorts.",
+                options: ["Yes", "No"],
+                correct: 0
+            },
+            {
+                id: 6,
+                text: "Linh wears a yellow skirt.",
+                options: ["Yes", "No"],
+                correct: 1
+            },
+            {
+                id: 7,
+                text: "Linh wears long socks.",
+                options: ["Yes", "No"],
+                correct: 0
+            },
+            {
+                id: 8,
+                text: "Minh has black shoes.",
+                options: ["Yes", "No"],
+                correct: 0
+            },
+            {
+                id: 9,
+                text: "Linh's rain boots are green.",
+                options: ["Yes", "No"],
+                correct: 1
+            },
+            {
+                id: 10,
+                text: "Minh's hat is big, but Linh's bag is small.",
+                options: ["Yes", "No"],
+                correct: 0
+            }
+        ];
+
+        // State variables
+        let questions = [];
+        let currentIndex = 0;
+        let userAnswers = {}; // { questionId: selectedIndex }
+        let currentMode = 'card'; // 'card' or 'list'
+
+        // Fisher-Yates Shuffle Algorithm to ensure random order on every restart
+        function shuffleQuestions(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // DOM Elements
+        const passageText = document.getElementById('passage-text');
+        const readAloudBtn = document.getElementById('read-aloud-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const progressBadge = document.getElementById('progress-badge');
+        
+        // Mode switchers
+        const viewCardBtn = document.getElementById('view-card-btn');
+        const viewListBtn = document.getElementById('view-list-btn');
+        const cardModeContainer = document.getElementById('card-mode-container');
+        const listModeContainer = document.getElementById('list-mode-container');
+
+        // Card mode elements
+        const currentQNum = document.getElementById('current-q-num');
+        const feedbackBadge = document.getElementById('feedback-badge');
+        const quizProgressBar = document.getElementById('quiz-progress-bar');
+        const activeQuestionText = document.getElementById('active-question-text');
+        const mcqOptionsContainer = document.getElementById('mcq-options-container');
+        const prevQBtn = document.getElementById('prev-q-btn');
+        const nextQBtn = document.getElementById('next-q-btn');
+
+        // List mode elements
+        const listQuestionsWrapper = document.getElementById('list-questions-wrapper');
+        const submitAllListBtn = document.getElementById('submit-all-list-btn');
+
+        // Results modal
+        const resultsModal = document.getElementById('results-modal');
+        const modalIconContainer = document.getElementById('modal-icon-container');
+        const statScore = document.getElementById('stat-score');
+        const statCorrect = document.getElementById('stat-correct');
+        const statIncorrect = document.getElementById('stat-incorrect');
+        const modalFeedbackMsg = document.getElementById('modal-feedback-msg');
+        const reviewAnswersBtn = document.getElementById('review-answers-btn');
+        const modalRestartBtn = document.getElementById('modal-restart-btn');
+
+        // Initialize or Restart Game
+        function initQuiz() {
+            // Shuffle questions to ensure order is different from previous runs
+            questions = shuffleQuestions(originalQuestions);
+            currentIndex = 0;
+            userAnswers = {};
+
+            // Hide modal
+            resultsModal.classList.add('hidden');
+
+            // Render current view
+            updateProgress();
+            renderActiveQuestion();
+            renderListQuestions();
+            
+            // Default view setup
+            setMode('card');
+        }
+
+        // Update top progress badge & bar
+        function updateProgress() {
+            const answeredCount = Object.keys(userAnswers).length;
+            progressBadge.textContent = `${answeredCount}/10`;
+            quizProgressBar.style.width = `${((currentIndex + 1) / 10) * 100}%`;
+        }
+
+        // Render Card Mode (Single MCQ Question Stepper)
+        function renderActiveQuestion() {
+            const q = questions[currentIndex];
+            currentQNum.textContent = `Question ${currentIndex + 1} of 10`;
+            activeQuestionText.textContent = `${currentIndex + 1}. ${q.text}`;
+            
+            mcqOptionsContainer.innerHTML = '';
+            const selectedOptIndex = userAnswers[q.id];
+
+            q.options.forEach((optText, optIdx) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                
+                let btnStyle = "w-full text-center py-4 px-6 rounded-xl border-2 font-bold text-lg flex items-center justify-center gap-3 option-btn transition shadow-sm ";
+                
+                if (selectedOptIndex !== undefined) {
+                    // Question has been answered
+                    if (optIdx === q.correct) {
+                        // Correct option
+                        btnStyle += "bg-emerald-50 border-emerald-500 text-emerald-800";
+                    } else if (optIdx === selectedOptIndex) {
+                        // Wrong option selected
+                        btnStyle += "bg-rose-50 border-rose-500 text-rose-800";
+                    } else {
+                        // Unselected option
+                        btnStyle += "bg-slate-50 border-slate-200 text-slate-400 opacity-60";
+                    }
+                } else {
+                    // Unanswered state - distinct visual styles for Yes and No buttons
+                    if (optText === "Yes") {
+                        btnStyle += "bg-emerald-500 hover:bg-emerald-600 border-emerald-600 text-white shadow-emerald-200";
+                    } else {
+                        btnStyle += "bg-rose-500 hover:bg-rose-600 border-rose-600 text-white shadow-rose-200";
+                    }
+                }
+
+                btn.className = btnStyle;
+
+                let iconHtml = optText === "Yes" ? `<i class="fa-solid fa-circle-check"></i>` : `<i class="fa-solid fa-circle-xmark"></i>`;
+                
+                if (selectedOptIndex !== undefined) {
+                    if (optIdx === q.correct) {
+                        iconHtml = `<i class="fa-solid fa-check text-emerald-600"></i>`;
+                    } else if (optIdx === selectedOptIndex) {
+                        iconHtml = `<i class="fa-solid fa-xmark text-rose-600"></i>`;
+                    }
+                }
+
+                btn.innerHTML = `
+                    ${iconHtml}
+                    <span>${optText}</span>
+                `;
+
+                btn.addEventListener('click', () => {
+                    selectOption(q.id, optIdx);
+                });
+
+                mcqOptionsContainer.appendChild(btn);
+            });
+
+            // Status Badge
+            if (selectedOptIndex !== undefined) {
+                feedbackBadge.classList.remove('hidden');
+                if (selectedOptIndex === q.correct) {
+                    feedbackBadge.textContent = "Correct";
+                    feedbackBadge.className = "text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700";
+                } else {
+                    feedbackBadge.textContent = "Incorrect";
+                    feedbackBadge.className = "text-xs font-bold px-2.5 py-1 rounded-full bg-rose-100 text-rose-700";
+                }
+            } else {
+                feedbackBadge.classList.add('hidden');
+            }
+
+            // Buttons state
+            prevQBtn.disabled = currentIndex === 0;
+            
+            if (currentIndex === questions.length - 1) {
+                nextQBtn.innerHTML = `Finish <i class="fa-solid fa-flag-checkered ml-1"></i>`;
+            } else {
+                nextQBtn.innerHTML = `Next <i class="fa-solid fa-chevron-right ml-1"></i>`;
+            }
+
+            updateProgress();
+        }
+
+        // Option selected handler
+        function selectOption(questionId, optionIndex) {
+            userAnswers[questionId] = optionIndex;
+            renderActiveQuestion();
+
+            // Auto advance after short delay
+            setTimeout(() => {
+                if (currentIndex < questions.length - 1) {
+                    currentIndex++;
+                    renderActiveQuestion();
+                } else {
+                    checkAndFinishQuiz();
+                }
+            }, 450);
+        }
+
+        // Render List View for MCQs
+        function renderListQuestions() {
+            listQuestionsWrapper.innerHTML = '';
+
+            questions.forEach((q, idx) => {
+                const selectedOptIndex = userAnswers[q.id];
+                const qEl = document.createElement('div');
+                qEl.className = "p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3";
+
+                let optionsListHtml = '';
+                q.options.forEach((optText, optIdx) => {
+                    let isChecked = selectedOptIndex === optIdx ? 'checked' : '';
+                    optionsListHtml += `
+                        <label class="flex items-center space-x-2 p-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 cursor-pointer text-sm font-semibold text-slate-700">
+                            <input type="radio" name="list-q-${q.id}" value="${optIdx}" ${isChecked} onchange="setListOption(${q.id}, ${optIdx})" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                            <span>${optText}</span>
+                        </label>
+                    `;
+                });
+
+                qEl.innerHTML = `
+                    <div class="flex justify-between items-start gap-2">
+                        <span class="text-sm font-semibold text-slate-800">${idx + 1}. ${q.text}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        ${optionsListHtml}
+                    </div>
+                `;
+                listQuestionsWrapper.appendChild(qEl);
+            });
+        }
+
+        window.setListOption = function(qId, optIdx) {
+            userAnswers[qId] = optIdx;
+            updateProgress();
+        };
+
+        // Check if all questions completed and trigger results modal
+        function checkAndFinishQuiz() {
+            let correctCount = 0;
+            let incorrectCount = 0;
+
+            questions.forEach(q => {
+                const uAns = userAnswers[q.id];
+                if (uAns === q.correct) {
+                    correctCount++;
+                } else {
+                    incorrectCount++;
+                }
+            });
+
+            const total = questions.length;
+            const pct = Math.round((correctCount / total) * 100);
+
+            statScore.textContent = `${pct}%`;
+            statCorrect.textContent = correctCount;
+            statIncorrect.textContent = incorrectCount;
+
+            if (pct === 100) {
+                modalIconContainer.className = "w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl";
+                modalIconContainer.innerHTML = `<i class="fa-solid fa-trophy"></i>`;
+                modalFeedbackMsg.textContent = "Outstanding! Perfect score! You have answered all Yes/No questions correctly!";
+                
+                // Launch celebratory confetti
+                if (typeof confetti === 'function') {
+                    confetti({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { y: 0.6 }
+                    });
+                }
+            } else if (pct >= 70) {
+                modalIconContainer.className = "w-16 h-16 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl";
+                modalIconContainer.innerHTML = `<i class="fa-solid fa-star"></i>`;
+                modalFeedbackMsg.textContent = "Great job! You answered most of the questions correctly.";
+            } else {
+                modalIconContainer.className = "w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl";
+                modalIconContainer.innerHTML = `<i class="fa-solid fa-graduation-cap"></i>`;
+                modalFeedbackMsg.textContent = "Good try! Read the passage carefully again and try once more.";
+            }
+
+            resultsModal.classList.remove('hidden');
+        }
+
+        // Switching View Modes
+        function setMode(mode) {
+            currentMode = mode;
+            if (mode === 'card') {
+                cardModeContainer.classList.remove('hidden');
+                listModeContainer.classList.add('hidden');
+                viewCardBtn.className = "px-2.5 py-1 rounded-md bg-white text-indigo-600 font-medium shadow-xs";
+                viewListBtn.className = "px-2.5 py-1 rounded-md text-slate-600 font-medium hover:text-slate-900";
+                renderActiveQuestion();
+            } else {
+                cardModeContainer.classList.add('hidden');
+                listModeContainer.classList.remove('hidden');
+                viewListBtn.className = "px-2.5 py-1 rounded-md bg-white text-indigo-600 font-medium shadow-xs";
+                viewCardBtn.className = "px-2.5 py-1 rounded-md text-slate-600 font-medium hover:text-slate-900";
+                renderListQuestions();
+            }
+        }
+
+        // Keyboard shortcuts for Desktop experience (Y/1/A for Yes, N/2/B for No)
+        document.addEventListener('keydown', (e) => {
+            if (!resultsModal.classList.contains('hidden')) return;
+
+            if (currentMode === 'card') {
+                const q = questions[currentIndex];
+                const key = e.key.toLowerCase();
+
+                if (key === 'y' || key === '1' || key === 'a') {
+                    selectOption(q.id, 0); // 0 = Yes
+                } else if (key === 'n' || key === '2' || key === 'b') {
+                    selectOption(q.id, 1); // 1 = No
+                } else if (key === 'enter') {
+                    e.preventDefault();
+                    if (currentIndex < questions.length - 1) {
+                        currentIndex++;
+                        renderActiveQuestion();
+                    } else {
+                        checkAndFinishQuiz();
+                    }
+                }
+            }
+        });
+
+        // Navigation Controls
+        prevQBtn.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderActiveQuestion();
+            }
+        });
+
+        nextQBtn.addEventListener('click', () => {
+            if (currentIndex < questions.length - 1) {
+                currentIndex++;
+                renderActiveQuestion();
+            } else {
+                checkAndFinishQuiz();
+            }
+        });
+
+        // Mode switch buttons
+        viewCardBtn.addEventListener('click', () => setMode('card'));
+        viewListBtn.addEventListener('click', () => setMode('list'));
+
+        submitAllListBtn.addEventListener('click', checkAndFinishQuiz);
+
+        // Reset/Restart
+        resetBtn.addEventListener('click', initQuiz);
+        modalRestartBtn.addEventListener('click', initQuiz);
+
+        reviewAnswersBtn.addEventListener('click', () => {
+            resultsModal.classList.add('hidden');
+        });
+
+        // Text-to-speech read aloud for accessibility & reading practice
+        readAloudBtn.addEventListener('click', () => {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const text = passageText.textContent;
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.9;
+                utterance.lang = 'en-US';
+                
+                readAloudBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Reading...`;
+                readAloudBtn.disabled = true;
+
+                utterance.onend = () => {
+                    readAloudBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i> Listen`;
+                    readAloudBtn.disabled = false;
+                };
+
+                utterance.onerror = () => {
+                    readAloudBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i> Listen`;
+                    readAloudBtn.disabled = false;
+                };
+
+                window.speechSynthesis.speak(utterance);
+            }
+        });
+
+        window.onload = function() {
+            initQuiz();
+        };
+    </script>
+</body>
+</html>
