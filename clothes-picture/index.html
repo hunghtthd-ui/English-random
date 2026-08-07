@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Exercise - Clothes Yes/No Quiz</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif']
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            touch-action: manipulation;
+        }
+
+        .heading-font {
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        /* Smooth bounce animation for audio icon */
+        @keyframes pulse-audio {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.15); opacity: 0.85; }
+        }
+        .audio-playing {
+            animation: pulse-audio 1s infinite ease-in-out;
+        }
+
+        /* Image Zoom container */
+        .img-container {
+            overflow: hidden;
+            position: relative;
+            cursor: zoom-in;
+        }
+        
+        .img-container img {
+            transition: transform 0.3s ease;
+        }
+
+        /* Glassmorphism utility */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(8px);
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col justify-between">
+
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 text-white p-2.5 rounded-xl shadow-md">
+                    <i class="fa-solid fa-graduation-cap text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold heading-font text-gray-900 leading-tight">Kids Clothes Quiz</h1>
+                    <p class="text-xs text-gray-500 font-medium">Look at the picture and answer Yes or No</p>
+                </div>
+            </div>
+
+            <!-- Quiz Controls Header -->
+            <div class="flex items-center space-x-2 sm:space-x-4">
+                <button id="voiceSelectBtn" onclick="toggleSettingsModal()" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-gray-300 hover:bg-gray-50 text-xs font-semibold text-gray-700 transition">
+                    <i class="fa-solid fa-volume-high text-indigo-600"></i>
+                    <span class="hidden sm:inline">Audio Settings</span>
+                </button>
+                <button onclick="restartQuiz()" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold transition">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>Restart</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-4 sm:py-6 flex-grow w-full">
+        <!-- Progress Bar Header -->
+        <div class="bg-white rounded-2xl p-4 mb-4 shadow-sm border border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="w-full sm:w-2/3 flex items-center space-x-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md">Progress</span>
+                <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                    <div id="progressBar" class="bg-indigo-600 h-3 rounded-full transition-all duration-300" style="width: 10%;"></div>
+                </div>
+            </div>
+            <div class="flex items-center justify-between w-full sm:w-auto space-x-4 text-sm font-semibold text-gray-600">
+                <span>Question <strong id="currentQNum" class="text-indigo-600">1</strong> of <span id="totalQNum">10</span></span>
+                <span id="scoreBadge" class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-1 rounded-full"><i class="fa-solid fa-circle-check mr-1"></i> Score: <span id="scoreText">0</span>/10</span>
+            </div>
+        </div>
+
+        <!-- Split View: Left Image / Right Interactive Panel -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+            <section class="lg:col-span-7 bg-white p-3 sm:p-4 rounded-2xl shadow-sm border border-gray-200">
+                <div class="flex items-center justify-between mb-2 px-1">
+                    <span class="text-xs font-bold text-gray-500 uppercase tracking-wider"><i class="fa-solid fa-image mr-1"></i> Exercise Picture</span>
+                    <div class="flex items-center space-x-1">
+                        <button onclick="zoomImage(1.2)" class="p-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-lg" title="Zoom In">
+                            <i class="fa-solid fa-magnifying-glass-plus"></i>
+                        </button>
+                        <button onclick="resetZoom()" class="p-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-lg" title="Reset Zoom">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                        </button>
+                        <button onclick="openImageModal()" class="p-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-lg" title="Fullscreen">
+                            <i class="fa-solid fa-expand"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Main Display Image -->
+                <div id="imgContainer" class="img-container bg-slate-100 rounded-xl flex items-center justify-center min-h-[300px] max-h-[520px] overflow-hidden border border-gray-100">
+                    <img id="quizImage" src="children_clothing.jpg" alt="Children wearing clothes (Liam, Olivia, Ben, Chloe, Sophia)" 
+                         class="w-full h-auto object-contain max-h-[500px] rounded-lg shadow-sm"
+                         onerror="handleImageError(this)">
+                </div>
+                
+                <!-- Image Upload / Source Selector Fallback helper -->
+                <div class="mt-2 flex items-center justify-between text-xs text-gray-400 px-1">
+                    <span>Look closely at Liam, Olivia, Ben, Chloe, and Sophia</span>
+                    <label class="cursor-pointer text-indigo-600 hover:underline">
+                        <i class="fa-solid fa-upload mr-1"></i>Change Image
+                        <input type="file" id="imageUploader" accept="image/*" class="hidden" onchange="uploadCustomImage(event)">
+                    </label>
+                </div>
+            </section>
+
+            <section class="lg:col-span-5 flex flex-col gap-4">
+                <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-gray-200 flex flex-col justify-between min-h-[380px]">
+                    
+                    <!-- Question Audio and Text Box -->
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full uppercase tracking-wider">
+                                Question <span id="qBadgeNum">1</span>
+                            </span>
+                            <span id="attemptBadge" class="text-xs font-medium text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full hidden">
+                                <i class="fa-solid fa-triangle-exclamation mr-1"></i> Attempt <span id="attemptCount">1</span>/3
+                            </span>
+                        </div>
+
+                        <!-- Read Aloud Card -->
+                        <div class="bg-indigo-50/70 border border-indigo-100 p-4 sm:p-5 rounded-xl mb-6 flex items-start space-x-3 transition hover:border-indigo-200">
+                            <button id="speakBtn" onclick="speakCurrentQuestion()" class="mt-0.5 bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-full shadow-md flex-shrink-0 transition active:scale-95" title="Listen to sentence">
+                                <i id="speakerIcon" class="fa-solid fa-volume-high text-lg"></i>
+                            </button>
+                            <div class="flex-grow">
+                                <p id="questionText" class="text-lg sm:text-xl font-bold text-gray-900 leading-snug">
+                                    Loading question...
+                                </p>
+                                <p class="text-xs text-indigo-600 font-medium mt-1">
+                                    <i class="fa-regular fa-lightbulb mr-1"></i>Click speaker button to hear sentence again.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Options: Yes / No buttons -->
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <button id="btnYes" onclick="selectAnswer(true)" class="quiz-option bg-white border-2 border-gray-200 hover:border-indigo-400 hover:bg-indigo-50/50 text-gray-800 rounded-xl p-4 flex flex-col items-center justify-center transition shadow-sm font-bold text-lg group">
+                                <span class="text-2xl mb-1 group-hover:scale-110 transition-transform">👍</span>
+                                <span>YES</span>
+                                <span class="text-[10px] text-gray-400 font-normal mt-0.5">(Press 'Y' or 1)</span>
+                            </button>
+                            <button id="btnNo" onclick="selectAnswer(false)" class="quiz-option bg-white border-2 border-gray-200 hover:border-indigo-400 hover:bg-indigo-50/50 text-gray-800 rounded-xl p-4 flex flex-col items-center justify-center transition shadow-sm font-bold text-lg group">
+                                <span class="text-2xl mb-1 group-hover:scale-110 transition-transform">👎</span>
+                                <span>NO</span>
+                                <span class="text-[10px] text-gray-400 font-normal mt-0.5">(Press 'N' or 2)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Action and Feedback Area -->
+                    <div class="mt-auto">
+                        <!-- Message Box Feedback -->
+                        <div id="feedbackBox" class="hidden p-4 rounded-xl mb-4 text-center font-bold text-sm transition-all duration-300">
+                            <p id="feedbackText" class="text-base"></p>
+                            <p id="feedbackDetail" class="text-xs font-normal mt-1 opacity-90"></p>
+                        </div>
+
+                        <!-- Check / Next Button -->
+                        <button id="checkBtn" onclick="checkAnswer()" disabled class="w-full py-3.5 px-6 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition shadow-md flex items-center justify-center space-x-2">
+                            <span>Check Answer</span>
+                            <span class="text-xs font-normal opacity-80">(Press Enter ↵)</span>
+                        </button>
+
+                        <button id="nextBtn" onclick="nextQuestion()" class="hidden w-full py-3.5 px-6 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition shadow-md flex items-center justify-center space-x-2">
+                            <span>Next Question</span>
+                            <i class="fa-solid fa-arrow-right text-sm"></i>
+                        </button>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 py-3 mt-6 text-center text-xs text-gray-500">
+        <p>Interactive English Quiz Platform &bull; Compatible with Mobile & Desktop</p>
+    </footer>
+
+    <!-- Image Fullscreen Lightbox Modal -->
+    <div id="imageModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+        <button onclick="closeImageModal()" class="absolute top-4 right-4 text-white text-2xl p-2 hover:text-gray-300">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <img id="modalImg" src="image_0f7ec5.jpg" alt="Enlarged view" class="max-w-full max-h-[90vh] object-contain rounded-lg">
+    </div>
+
+    <!-- Audio Settings Modal -->
+    <div id="settingsModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-gray-900 heading-font">Audio & Speech Settings</h3>
+                <button onclick="toggleSettingsModal()" class="text-gray-400 hover:text-gray-600 text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Voice Selection (Female Recommended):</label>
+                    <select id="voiceSelect" class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500">
+                        <option value="">Default Female Voice</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Reading Speed (Slow & Clear):</label>
+                    <input type="range" id="speechRate" min="0.5" max="1.0" step="0.05" value="0.75" class="w-full accent-indigo-600">
+                    <div class="flex justify-between text-[10px] text-gray-500 mt-0.5">
+                        <span>Slow (0.5x)</span>
+                        <span id="rateVal">0.75x</span>
+                        <span>Normal (1.0x)</span>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Auto-play audio on new question:</label>
+                    <div class="flex items-center space-x-2">
+                        <input type="checkbox" id="autoplayCheck" checked class="w-4 h-4 text-indigo-600 rounded">
+                        <span class="text-xs text-gray-600">Automatically read out sentence</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+                <button onclick="saveAudioSettings()" class="bg-indigo-600 text-white font-semibold text-sm px-4 py-2 rounded-lg hover:bg-indigo-700">
+                    Save & Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Final Results Modal -->
+    <div id="resultsModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl text-center transform transition-all">
+            <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+            
+            <h2 class="text-2xl sm:text-3xl font-bold heading-font text-gray-900 mb-1">Quiz Completed!</h2>
+            <p class="text-gray-500 text-sm mb-6">Here is how you performed in this exercise:</p>
+
+            <div class="grid grid-cols-2 gap-3 mb-6">
+                <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+                    <p class="text-xs text-gray-500 font-medium">Final Score</p>
+                    <p class="text-2xl font-black text-indigo-600" id="finalScore">0 / 10</p>
+                </div>
+                <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+                    <p class="text-xs text-gray-500 font-medium">Accuracy</p>
+                    <p class="text-2xl font-black text-emerald-600" id="finalAccuracy">0%</p>
+                </div>
+                <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+                    <p class="text-xs text-gray-500 font-medium">Correct 1st Try</p>
+                    <p class="text-xl font-bold text-gray-800" id="firstTryCount">0</p>
+                </div>
+                <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+                    <p class="text-xs text-gray-500 font-medium">Total Mistakes</p>
+                    <p class="text-xl font-bold text-amber-600" id="totalMistakes">0</p>
+                </div>
+            </div>
+
+            <div class="mb-6 max-h-40 overflow-y-auto text-left border rounded-xl p-3 bg-gray-50 space-y-2 text-xs" id="summaryList">
+                <!-- Detailed question summary inserted here -->
+            </div>
+
+            <button onclick="restartQuiz()" class="w-full py-3.5 px-6 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-lg flex items-center justify-center space-x-2 text-base">
+                <i class="fa-solid fa-rotate-right"></i>
+                <span>Try Again (Shuffle Questions)</span>
+            </button>
+        </div>
+    </div>
+
+
+    <script>
+        // Master list of 10 questions with verified correct answers from image
+        const masterQuestions = [
+            { id: 1, text: "Liam wears a red hat.", answer: true, explanation: "Liam is wearing a red cap on his head." },
+            { id: 2, text: "Liam wears blue shorts.", answer: false, explanation: "Liam wears brown shorts, not blue shorts." },
+            { id: 3, text: "Olivia wears a yellow coat.", answer: true, explanation: "Olivia wears a yellow raincoat." },
+            { id: 4, text: "Olivia wears blue rain boots.", answer: false, explanation: "Olivia wears red rain boots." },
+            { id: 5, text: "Ben wears a blue shirt.", answer: false, explanation: "Ben wears an orange and white striped shirt." },
+            { id: 6, text: "Ben wears long white socks.", answer: true, explanation: "Ben wears long white socks up to his knees." },
+            { id: 7, text: "Chloe wears a pink skirt.", answer: true, explanation: "Chloe wears a tiered pink skirt." },
+            { id: 8, text: "Chloe wears a red bag.", answer: false, explanation: "Chloe wears a blue and white striped tote bag." },
+            { id: 9, text: "Sophia wears a purple coat.", answer: true, explanation: "Sophia wears a purple winter coat." },
+            { id: 10, text: "Sophia wears green pants.", answer: false, explanation: "Sophia wears green trousers/pants." } // Updated based on verification: Sophia wears green pants (YES). Wait, let's double check index 10: "Sophia wears green pants." -> YES!
+        ];
+
+        // Ensure exact mapping for Q10
+        masterQuestions[9].answer = true;
+        masterQuestions[9].explanation = "Sophia wears green pants.";
+
+        const praises = ["Well done!", "Good job!", "Excellent!", "Very good!"];
+
+        // State variables
+        let questions = [];
+        let currentIdx = 0;
+        let selectedChoice = null; // true for YES, false for NO
+        let attemptsCount = 0;
+        let score = 0;
+        let firstTryCount = 0;
+        let totalMistakes = 0;
+        let questionStats = []; // Store stats for summary
+        let currentZoom = 1;
+        let speechSynth = window.speechSynthesis;
+        let availableVoices = [];
+        let femaleVoice = null;
+        let speechRate = 0.75;
+        let autoPlayAudio = true;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initSpeechSynthesis();
+            initWebAudio();
+            restartQuiz();
+            setupKeyboardListeners();
+            
+            // Slider rate change listener
+            document.getElementById('speechRate').addEventListener('input', (e) => {
+                speechRate = parseFloat(e.target.value);
+                document.getElementById('rateVal').innerText = speechRate + 'x';
+            });
+        });
+
+        function initSpeechSynthesis() {
+            if (!('speechSynthesis' in window)) {
+                console.warn("Speech synthesis not supported in this browser.");
+                return;
+            }
+
+            function loadVoices() {
+                availableVoices = speechSynth.getVoices();
+                const voiceSelect = document.getElementById('voiceSelect');
+                voiceSelect.innerHTML = '';
+
+                if (availableVoices.length === 0) return;
+
+                // Priority filter for clear female English voices
+                femaleVoice = availableVoices.find(v => v.lang.startsWith('en') && (
+                    v.name.toLowerCase().includes('female') || 
+                    v.name.toLowerCase().includes('samantha') || 
+                    v.name.toLowerCase().includes('zira') || 
+                    v.name.toLowerCase().includes('victoria') ||
+                    v.name.toLowerCase().includes('google us english') ||
+                    v.name.toLowerCase().includes('karen')
+                ));
+
+                // Fallback to any English voice
+                if (!femaleVoice) {
+                    femaleVoice = availableVoices.find(v => v.lang.startsWith('en')) || availableVoices[0];
+                }
+
+                availableVoices.forEach((voice, index) => {
+                    const opt = document.createElement('option');
+                    opt.value = index;
+                    opt.textContent = `${voice.name} (${voice.lang})`;
+                    if (voice === femaleVoice) opt.selected = true;
+                    voiceSelect.appendChild(opt);
+                });
+            }
+
+            loadVoices();
+            if (speechSynth.onvoiceschanged !== undefined) {
+                speechSynth.onvoiceschanged = loadVoices;
+            }
+        }
+
+        function speakText(text, callback) {
+            if (!speechSynth) return;
+            speechSynth.cancel(); // Stop ongoing speech
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = speechRate; // Slow and clear
+            utterance.pitch = 1.0;
+
+            const selectedVoiceIdx = document.getElementById('voiceSelect').value;
+            if (selectedVoiceIdx !== "" && availableVoices[selectedVoiceIdx]) {
+                utterance.voice = availableVoices[selectedVoiceIdx];
+            } else if (femaleVoice) {
+                utterance.voice = femaleVoice;
+            }
+
+            const speakerIcon = document.getElementById('speakerIcon');
+            const speakBtn = document.getElementById('speakBtn');
+            
+            utterance.onstart = () => {
+                if (speakerIcon) speakerIcon.classList.add('audio-playing');
+                if (speakBtn) speakBtn.classList.add('ring-4', 'ring-indigo-300');
+            };
+
+            utterance.onend = utterance.onerror = () => {
+                if (speakerIcon) speakerIcon.classList.remove('audio-playing');
+                if (speakBtn) speakBtn.classList.remove('ring-4', 'ring-indigo-300');
+                if (callback) callback();
+            };
+
+            speechSynth.speak(utterance);
+        }
+
+        function speakCurrentQuestion() {
+            if (questions[currentIdx]) {
+                speakText(questions[currentIdx].text);
+            }
+        }
+
+        let audioCtx = null;
+        function initWebAudio() {
+            // AudioContext created on user interaction
+        }
+
+        function playSoundEffect(type) {
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                if (type === 'correct') {
+                    // Chime synth sequence
+                    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                    notes.forEach((freq, idx) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.08);
+                        gain.gain.setValueAtTime(0.15, audioCtx.currentTime + idx * 0.08);
+                        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.08 + 0.3);
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start(audioCtx.currentTime + idx * 0.08);
+                        osc.stop(audioCtx.currentTime + idx * 0.08 + 0.3);
+                    });
+                } else if (type === 'wrong') {
+                    // Low error buzz
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(160, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.25);
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.25);
+                }
+            } catch (e) {
+                console.warn('Audio effect error:', e);
+            }
+        }
+
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function restartQuiz() {
+            // Shuffle questions list
+            questions = shuffleArray(masterQuestions);
+            currentIdx = 0;
+            score = 0;
+            firstTryCount = 0;
+            totalMistakes = 0;
+            questionStats = masterQuestions.map(q => ({ id: q.id, attempts: 0, correct: false }));
+
+            document.getElementById('scoreText').innerText = score;
+            document.getElementById('resultsModal').classList.add('hidden');
+            
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = questions[currentIdx];
+            attemptsCount = 0;
+            selectedChoice = null;
+
+            // UI updates
+            document.getElementById('currentQNum').innerText = currentIdx + 1;
+            document.getElementById('qBadgeNum').innerText = currentIdx + 1;
+            document.getElementById('totalQNum').innerText = questions.length;
+            document.getElementById('questionText').innerText = q.text;
+
+            // Calculate progress percentage
+            const progressPct = ((currentIdx) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = `${progressPct}%`;
+
+            // Reset buttons state
+            resetChoiceButtons();
+            
+            // Hide feedback box
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.className = 'hidden p-4 rounded-xl mb-4 text-center font-bold text-sm transition-all duration-300';
+            
+            // Toggle check/next buttons
+            document.getElementById('checkBtn').classList.remove('hidden');
+            document.getElementById('checkBtn').disabled = true;
+            document.getElementById('nextBtn').classList.add('hidden');
+            document.getElementById('attemptBadge').classList.add('hidden');
+
+            // Speak question automatically if enabled
+            if (autoPlayAudio) {
+                setTimeout(() => {
+                    speakCurrentQuestion();
+                }, 300);
+            }
+        }
+
+        function resetChoiceButtons() {
+            const btnYes = document.getElementById('btnYes');
+            const btnNo = document.getElementById('btnNo');
+
+            btnYes.className = 'quiz-option bg-white border-2 border-gray-200 hover:border-indigo-400 hover:bg-indigo-50/50 text-gray-800 rounded-xl p-4 flex flex-col items-center justify-center transition shadow-sm font-bold text-lg group cursor-pointer';
+            btnNo.className = 'quiz-option bg-white border-2 border-gray-200 hover:border-indigo-400 hover:bg-indigo-50/50 text-gray-800 rounded-xl p-4 flex flex-col items-center justify-center transition shadow-sm font-bold text-lg group cursor-pointer';
+        }
+
+        function selectAnswer(isYes) {
+            selectedChoice = isYes;
+            
+            const btnYes = document.getElementById('btnYes');
+            const btnNo = document.getElementById('btnNo');
+
+            resetChoiceButtons();
+
+            if (isYes) {
+                btnYes.classList.remove('border-gray-200', 'bg-white');
+                btnYes.classList.add('border-indigo-600', 'bg-indigo-50', 'ring-2', 'ring-indigo-600');
+            } else {
+                btnNo.classList.remove('border-gray-200', 'bg-white');
+                btnNo.classList.add('border-indigo-600', 'bg-indigo-50', 'ring-2', 'ring-indigo-600');
+            }
+
+            // Enable check button
+            document.getElementById('checkBtn').disabled = false;
+        }
+
+        function checkAnswer() {
+            if (selectedChoice === null) return;
+
+            const q = questions[currentIdx];
+            const isCorrect = (selectedChoice === q.answer);
+            attemptsCount++;
+            totalMistakes += isCorrect ? 0 : 1;
+
+            const feedbackBox = document.getElementById('feedbackBox');
+            const feedbackText = document.getElementById('feedbackText');
+            const feedbackDetail = document.getElementById('feedbackDetail');
+
+            if (isCorrect) {
+                // Correct Answer Logic
+                playSoundEffect('correct');
+                
+                // Random praise selection
+                const praise = praises[Math.floor(Math.random() * praises.length)];
+                
+                feedbackBox.className = 'p-4 rounded-xl mb-4 text-center font-bold text-sm bg-emerald-50 text-emerald-800 border border-emerald-200 block';
+                feedbackText.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-2 text-lg"></i> ${praise}`;
+                feedbackDetail.innerText = q.explanation;
+
+                // Track stats
+                if (attemptsCount === 1) {
+                    firstTryCount++;
+                    score++;
+                } else {
+                    score++;
+                }
+                document.getElementById('scoreText').innerText = score;
+
+                // Voice praise
+                speakText(praise);
+
+                // UI adjustments
+                document.getElementById('checkBtn').classList.add('hidden');
+                document.getElementById('nextBtn').classList.remove('hidden');
+                disableChoiceButtons();
+
+            } else {
+                // Incorrect Answer Logic
+                playSoundEffect('wrong');
+
+                if (attemptsCount < 3) {
+                    feedbackBox.className = 'p-4 rounded-xl mb-4 text-center font-bold text-sm bg-rose-50 text-rose-800 border border-rose-200 block';
+                    feedbackText.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600 mr-2 text-lg"></i> Incorrect. Try again!`;
+                    feedbackDetail.innerText = `Attempt ${attemptsCount} of 3. Look closely at the picture.`;
+
+                    // Update attempt badge
+                    document.getElementById('attemptBadge').classList.remove('hidden');
+                    document.getElementById('attemptCount').innerText = attemptsCount;
+
+                    // Speak try again
+                    speakText("Incorrect. Try again!");
+
+                    // Reset choice selection for retry
+                    selectedChoice = null;
+                    resetChoiceButtons();
+                    document.getElementById('checkBtn').disabled = true;
+
+                } else {
+                    // Exceeded max 3 attempts -> Reveal Answer
+                    feedbackBox.className = 'p-4 rounded-xl mb-4 text-center font-bold text-sm bg-amber-50 text-amber-900 border border-amber-200 block';
+                    feedbackText.innerHTML = `<i class="fa-solid fa-circle-info text-amber-600 mr-2 text-lg"></i> Correct answer: ${q.answer ? 'YES' : 'NO'}`;
+                    feedbackDetail.innerText = `${q.explanation}`;
+
+                    speakText(`The correct answer is ${q.answer ? 'YES' : 'NO'}. ${q.explanation}`);
+
+                    document.getElementById('checkBtn').classList.add('hidden');
+                    document.getElementById('nextBtn').classList.remove('hidden');
+                    disableChoiceButtons();
+                }
+            }
+        }
+
+        function disableChoiceButtons() {
+            document.getElementById('btnYes').classList.add('pointer-events-none', 'opacity-80');
+            document.getElementById('btnNo').classList.add('pointer-events-none', 'opacity-80');
+        }
+
+        function nextQuestion() {
+            currentIdx++;
+            if (currentIdx < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('progressBar').style.width = '100%';
+            
+            const accuracy = Math.round((score / questions.length) * 100);
+            document.getElementById('finalScore').innerText = `${score} / ${questions.length}`;
+            document.getElementById('finalAccuracy').innerText = `${accuracy}%`;
+            document.getElementById('firstTryCount').innerText = firstTryCount;
+            document.getElementById('totalMistakes').innerText = totalMistakes;
+
+            // Generate review list
+            const summaryList = document.getElementById('summaryList');
+            summaryList.innerHTML = '';
+            
+            questions.forEach((q, idx) => {
+                const item = document.createElement('div');
+                item.className = 'p-2 bg-white rounded border flex justify-between items-center';
+                item.innerHTML = `
+                    <div>
+                        <span class="font-bold text-gray-700">${idx + 1}. ${q.text}</span>
+                        <p class="text-[10px] text-gray-500">Answer: <strong class="text-indigo-600">${q.answer ? 'YES' : 'NO'}</strong></p>
+                    </div>
+                    <span class="text-xs font-semibold px-2 py-0.5 rounded ${q.answer ? 'bg-emerald-100 text-emerald-700' : 'bg-indigo-100 text-indigo-700'}">
+                        ${q.answer ? 'YES' : 'NO'}
+                    </span>
+                `;
+                summaryList.appendChild(item);
+            });
+
+            // Speak congratulation
+            speakText(`Quiz finished! You scored ${score} out of ${questions.length}. Great job!`);
+
+            document.getElementById('resultsModal').classList.remove('hidden');
+        }
+
+        function setupKeyboardListeners() {
+            document.addEventListener('keydown', (e) => {
+                // Ignore if modal or settings is active
+                if (!document.getElementById('settingsModal').classList.contains('hidden') ||
+                    !document.getElementById('resultsModal').classList.contains('hidden')) {
+                    return;
+                }
+
+                const key = e.key.toLowerCase();
+
+                // 'Y' or '1' for YES
+                if (key === 'y' || key === '1') {
+                    selectAnswer(true);
+                } 
+                // 'N' or '2' for NO
+                else if (key === 'n' || key === '2') {
+                    selectAnswer(false);
+                } 
+                // Enter Key to Check or Advance
+                else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const checkBtn = document.getElementById('checkBtn');
+                    const nextBtn = document.getElementById('nextBtn');
+
+                    if (!nextBtn.classList.contains('hidden')) {
+                        nextQuestion();
+                    } else if (!checkBtn.disabled && !checkBtn.classList.contains('hidden')) {
+                        checkAnswer();
+                    }
+                }
+            });
+        }
+
+        function zoomImage(factor) {
+            currentZoom = (currentZoom === 1) ? factor : 1;
+            const img = document.getElementById('quizImage');
+            img.style.transform = `scale(${currentZoom})`;
+        }
+
+        function resetZoom() {
+            currentZoom = 1;
+            document.getElementById('quizImage').style.transform = 'scale(1)';
+        }
+
+        function openImageModal() {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImg');
+            modalImg.src = document.getElementById('quizImage').src;
+            modal.classList.remove('hidden');
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').classList.add('hidden');
+        }
+
+        function uploadCustomImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('quizImage').src = e.target.result;
+                    document.getElementById('modalImg').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleImageError(img) {
+            // Fallback placeholder if relative image not found
+            console.warn("Local image_0f7ec5.jpg or image.jpg not found. Loading visual fallback.");
+            img.onerror = null;
+            img.src = 'https://placehold.co/800x500/e0f2fe/0369a1?text=Liam+Olivia+Ben+Chloe+Sophia+Picture';
+        }
+
+        function toggleSettingsModal() {
+            const modal = document.getElementById('settingsModal');
+            modal.classList.toggle('hidden');
+        }
+
+        function saveAudioSettings() {
+            autoPlayAudio = document.getElementById('autoplayCheck').checked;
+            toggleSettingsModal();
+            speakText("Audio settings updated.");
+        }
+    </script>
+</body>
+</html>
