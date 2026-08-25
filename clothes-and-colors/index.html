@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Vocabulary Practice - Inline Blanks</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Nunito:wght@700;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 100%);
+            min-height: 100vh;
+            touch-action: manipulation;
+        }
+
+        .heading-font {
+            font-family: 'Nunito', sans-serif;
+        }
+
+        /* Inline letter box style */
+        .inline-box {
+            width: 32px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: bold;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            background-color: white;
+            transition: all 0.15s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            text-transform: uppercase;
+            margin: 0 2px;
+            vertical-align: middle;
+        }
+
+        @media (min-width: 640px) {
+            .inline-box {
+                width: 40px;
+                height: 48px;
+                font-size: 1.5rem;
+                border-width: 3px;
+                border-radius: 10px;
+                margin: 0 3px;
+            }
+        }
+
+        .inline-box.active {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .inline-box.filled {
+            border-color: #64748b;
+            color: #1e293b;
+            background-color: #f8fafc;
+        }
+
+        .inline-box.correct {
+            border-color: #22c55e;
+            color: #15803d;
+            background-color: #f0fdf4;
+        }
+
+        .inline-box.wrong {
+            border-color: #ef4444;
+            color: #b91c1c;
+            background-color: #fef2f2;
+        }
+
+        .fixed-char {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #475569;
+            margin: 0 2px;
+            vertical-align: middle;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .pop-in {
+            animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+<body class="text-gray-800 p-4 sm:p-6 flex items-center justify-center">
+
+    <div id="start-screen" class="glass-card rounded-3xl p-8 max-w-md w-full text-center pop-in">
+        <div class="w-20 h-20 bg-blue-100 text-blue-600 rounded-2xl mx-auto flex items-center justify-center text-3xl mb-4 shadow-inner">
+            <i class="fas fa-spell-check"></i>
+        </div>
+        <h1 class="heading-font text-3xl sm:text-4xl text-blue-600 mb-3">Vocabulary Master</h1>
+        <p class="text-gray-600 mb-6 text-sm sm:text-base">Listen to the sentence, view the picture, and fill in both missing words directly inside the sentence!</p>
+        
+        <div class="bg-blue-50 border border-blue-100 rounded-2xl p-4 text-left text-xs sm:text-sm text-blue-800 mb-6 space-y-2">
+            <div class="flex items-center gap-2"><i class="fas fa-volume-up text-blue-500"></i> Automatic audio pronunciation per question</div>
+            <div class="flex items-center gap-2"><i class="fas fa-keyboard text-blue-500"></i> Type directly using your keyboard or keypad</div>
+            <div class="flex items-center gap-2"><i class="fas fa-mouse-pointer text-blue-500"></i> Click any letter box to jump and edit instantly</div>
+        </div>
+
+        <button onclick="startGame()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl text-lg transition-all shadow-lg hover:shadow-xl flex justify-center items-center gap-2">
+            <i class="fas fa-play"></i> Start Practice
+        </button>
+    </div>
+
+    <div id="game-screen" class="glass-card rounded-3xl p-4 sm:p-8 max-w-2xl w-full hidden flex-col gap-5">
+        
+        <!-- Header: Progress & Score -->
+        <div class="flex justify-between items-center bg-gray-50 p-3.5 rounded-2xl border border-gray-100">
+            <div class="text-sm sm:text-base font-semibold text-gray-600">
+                Question: <span id="q-counter" class="text-blue-600 font-bold">1/14</span>
+            </div>
+            <div class="flex gap-5 text-sm sm:text-base">
+                <div class="text-green-600 font-bold"><i class="fas fa-check-circle"></i> <span id="score-correct">0</span></div>
+                <div class="text-red-500 font-bold"><i class="fas fa-times-circle"></i> <span id="score-wrong">0</span></div>
+            </div>
+        </div>
+
+        <!-- Image Container with Emoji Fallback -->
+        <div class="relative w-full h-48 sm:h-56 bg-slate-900 rounded-2xl overflow-hidden flex items-center justify-center shadow-inner group">
+            <img id="item-image" src="" alt="Vocabulary Item" class="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105" onerror="handleImageError()">
+            <div id="emoji-fallback" class="hidden text-8xl pop-in"></div>
+            
+            <!-- Audio replay button -->
+            <button onclick="playCurrentAudio()" class="absolute bottom-3 right-3 bg-white/90 hover:bg-white p-3.5 rounded-full shadow-lg text-blue-600 transition-transform active:scale-95" title="Listen Again">
+                <i class="fas fa-volume-up text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Inline Sentence Display with Embedded Character Boxes -->
+        <div class="text-center bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+            <div id="sentence-inline-container" class="heading-font text-base sm:text-xl text-gray-700 leading-loose flex flex-wrap items-center justify-center gap-y-3">
+                <!-- Dynamically populated inline sentence words and boxes -->
+            </div>
+            <p id="feedback-text" class="h-6 text-sm sm:text-base font-bold mt-4 opacity-0 transition-opacity"></p>
+        </div>
+
+        <!-- Hidden real input to capture keyboard events reliably -->
+        <input type="text" id="hidden-input" class="opacity-0 absolute -z-10 w-0 h-0" autocomplete="off" autocapitalize="none">
+
+        <!-- Action Buttons -->
+        <div class="flex justify-center gap-4 mt-1">
+            <button id="check-btn" onclick="checkAnswer()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-md transition-all flex items-center gap-2 text-base">
+                <i class="fas fa-check"></i> Check Answer (Enter)
+            </button>
+            <button id="next-btn" onclick="nextQuestion()" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-xl shadow-md transition-all flex items-center gap-2 text-base pop-in">
+                Next Question <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+
+    </div>
+
+    <div id="result-screen" class="glass-card rounded-3xl p-8 max-w-md w-full text-center hidden flex-col items-center gap-6">
+        <div class="w-20 h-20 bg-yellow-100 text-yellow-500 rounded-full mx-auto flex items-center justify-center text-4xl shadow-inner mb-1">
+            <i class="fas fa-trophy"></i>
+        </div>
+        <h2 class="heading-font text-3xl text-gray-800">Practice Completed!</h2>
+        
+        <div class="w-full bg-gray-50 border border-gray-100 rounded-2xl p-6 flex justify-around">
+            <div class="text-center">
+                <div class="text-3xl font-bold text-green-600" id="final-correct">0</div>
+                <div class="text-gray-500 text-sm font-medium mt-1">Correct Answers</div>
+            </div>
+            <div class="w-px bg-gray-200"></div>
+            <div class="text-center">
+                <div class="text-3xl font-bold text-red-500" id="final-wrong">0</div>
+                <div class="text-gray-500 text-sm font-medium mt-1">Needs Review</div>
+            </div>
+        </div>
+
+        <button onclick="resetGame()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl text-lg transition-all shadow-lg flex justify-center items-center gap-2">
+            <i class="fas fa-redo"></i> Play Again
+        </button>
+    </div>
+
+    <script>
+        // List of requested sentences with clothes item and color
+        const baseQuestions = [
+            { sentence: "The skirt is black.", item: "skirt", color: "black", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqSs8CktgciAAIjQKoYAwHzkA4vdf5alaEJS4EfNjEDw&s=10?auto=format&fit=crop&w=800&q=80", emoji: "👗" },
+            { sentence: "The coat is green.", item: "coat", color: "green", image: "https://www.macinasac.com/cdn/shop/files/SSP_142123.jpg?v=1741089429&width=1445?auto=format&fit=crop&w=800&q=80", emoji: "🧥" },
+            { sentence: "The dress is purple.", item: "dress", color: "purple", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1_Xh6KRMWRY-aBQLUW-4o_KKB5w-ips5EDJF8rpuqN0etM_2rMZUmA67E&s=10?auto=format&fit=crop&w=800&q=80", emoji: "👗" },
+            { sentence: "The hat is pink.", item: "hat", color: "pink", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNvWkKTiC1T9KIlE5u6l2sqx1fHKySfsVNjOJkwAzIXA&s=10?auto=format&fit=crop&w=800&q=80", emoji: "👒" },
+            { sentence: "The T-shirt is yellow.", item: "t-shirt", color: "yellow", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcDTDdnCOmbxQaCzEEnkRXFdgPeZdwFuPNDFS59TI6dUzGz1XBIev548pk&s=10?auto=format&fit=crop&w=800&q=80", emoji: "👕" },
+            { sentence: "The shirt is white.", item: "shirt", color: "white", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdo1D_lDjln0pRaZwhxdOyvMgMCqIadUi-tQCRabWrae1mYj6aY1pUvoo&s=10?auto=format&fit=crop&w=800&q=80", emoji: "👔" },
+            { sentence: "The pants are brown.", item: "pants", color: "brown", image: "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=800&q=80", emoji: "👖" },
+            { sentence: "The shorts are orange.", item: "shorts", color: "orange", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYMIRSYcel0ivKr8u89vho2k28Rdmn3EyWdSPzE2C38dKvkr-sA-0YiM5m&s=10?auto=format&fit=crop&w=800&q=80", emoji: "🩳" },
+            { sentence: "The socks are black.", item: "socks", color: "black", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA7G9ESxLWqSQUi43ICYBfr2fZHBxhfehb8UJwGNrnWylrYFWTaHJcvfWk&s=10?auto=format&fit=crop&w=800&q=80", emoji: "🧦" },
+            { sentence: "The shoes are white.", item: "shoes", color: "white", image: "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&w=800&q=80", emoji: "👞" },
+            { sentence: "The skirt is pink.", item: "skirt", color: "pink", image: "https://i.etsystatic.com/6095938/r/il/0c246f/6873359929/il_570xN.6873359929_iglr.jpg?auto=format&fit=crop&w=800&q=80", emoji: "👗" },
+            { sentence: "The T-shirt is green.", item: "t-shirt", color: "green", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQixM7xgeQMIKVSQTubOzBsg3to7ozkuMRbmiBOngh8eET0dlCsO9AsPeDl&s=10?auto=format&fit=crop&w=800&q=80", emoji: "👕" },
+            { sentence: "The shirt is purple.", item: "shirt", color: "purple", image: "https://i.ebayimg.com/images/g/UisAAeSwqhpplQzM/s-l400.jpg?auto=format&fit=crop&w=800&q=80", emoji: "👔" },
+            { sentence: "The coat is brown.", item: "coat", color: "brown", image: "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?auto=format&fit=crop&w=800&q=80", emoji: "🧥" }
+        ];
+
+        let gameQuestions = [];
+        let currentIndex = 0;
+        let currentItem = "";
+        let currentColor = "";
+        
+        let typedItem = [];   // Array storing typed chars for word 1 (excluding hyphens)
+        let typedColor = [];  // Array storing typed chars for word 2
+        let activeGlobalIndex = 0; 
+        
+        let wrongAttempts = 0;
+        let stats = { correct: 0, wrong: 0 };
+        let gameState = 'start'; 
+
+        // Audio Context for sound effects
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playTone(freq, type, duration) {
+            initAudio();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        function playCorrectSfx() {
+            playTone(523.25, 'sine', 0.1);
+            setTimeout(() => playTone(659.25, 'sine', 0.2), 100);
+        }
+
+        function playWrongSfx() {
+            playTone(280, 'sawtooth', 0.3);
+        }
+
+        function speak(text, rate = 0.8) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = rate; 
+                
+                const voices = window.speechSynthesis.getVoices();
+                const femaleVoice = voices.find(v => 
+                    v.lang.startsWith('en') && 
+                    (v.name.includes('Female') || v.name.includes('Samantha') || v.name.includes('Zira') || v.name.includes('Google US English') || v.name.includes('Victoria'))
+                );
+                
+                if (femaleVoice) {
+                    utterance.voice = femaleVoice;
+                }
+                
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function playCurrentAudio() {
+            if (gameQuestions[currentIndex]) {
+                speak(gameQuestions[currentIndex].sentence);
+            }
+        }
+
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function startGame() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            document.getElementById('game-screen').classList.add('flex');
+            
+            initAudio();
+            
+            gameQuestions = shuffleArray(baseQuestions);
+            currentIndex = 0;
+            stats = { correct: 0, wrong: 0 };
+            updateStatsUI();
+            
+            loadQuestion();
+        }
+
+        function resetGame() {
+            startGame();
+        }
+
+        function loadQuestion() {
+            gameState = 'playing';
+            wrongAttempts = 0;
+            const q = gameQuestions[currentIndex];
+            currentItem = q.item.toLowerCase();
+            currentColor = q.color.toLowerCase();
+            
+            // Exclude hyphens from editable letter slots since hyphens are rendered automatically
+            const editableItemLen = currentItem.replace(/-/g, '').length;
+            const editableColorLen = currentColor.replace(/-/g, '').length;
+
+            typedItem = new Array(editableItemLen).fill('');
+            typedColor = new Array(editableColorLen).fill('');
+            activeGlobalIndex = 0;
+
+            document.getElementById('q-counter').innerText = `${currentIndex + 1}/${gameQuestions.length}`;
+            
+            const imgEl = document.getElementById('item-image');
+            const emojiEl = document.getElementById('emoji-fallback');
+            imgEl.src = q.image;
+            imgEl.classList.remove('hidden');
+            emojiEl.classList.add('hidden');
+            emojiEl.innerText = q.emoji;
+
+            renderInlineSentence();
+
+            document.getElementById('next-btn').classList.add('hidden');
+            document.getElementById('check-btn').classList.remove('hidden');
+            
+            resetFeedback();
+            focusHiddenInput();
+
+            setTimeout(() => {
+                playCurrentAudio();
+            }, 350);
+        }
+
+        function renderInlineSentence() {
+            const container = document.getElementById('sentence-inline-container');
+            container.innerHTML = '';
+
+            // Part 1: "The"
+            const spanThe = document.createElement('span');
+            spanThe.innerText = "The ";
+            spanThe.className = "mx-1";
+            container.appendChild(spanThe);
+
+            // Item Boxes container (handling potential hyphens automatically e.g., "T-shirt")
+            const itemSpan = document.createElement('span');
+            itemSpan.className = "inline-flex items-center";
+            
+            let editableIndex = 0;
+            for (let i = 0; i < currentItem.length; i++) {
+                const char = currentItem[i];
+                if (char === '-') {
+                    // Render automatic permanent hyphen
+                    const hyphenEl = document.createElement('span');
+                    hyphenEl.innerText = "-";
+                    hyphenEl.className = "fixed-char";
+                    itemSpan.appendChild(hyphenEl);
+                } else {
+                    const currentEditableIdx = editableIndex;
+                    const globalIdx = currentEditableIdx;
+                    const box = document.createElement('span');
+                    box.className = 'inline-box';
+                    
+                    if (typedItem[currentEditableIdx] !== '') {
+                        box.innerText = typedItem[currentEditableIdx].toUpperCase();
+                        box.classList.add('filled');
+                    } else if (activeGlobalIndex === globalIdx && gameState === 'playing') {
+                        box.classList.add('active');
+                    }
+
+                    if (gameState === 'correct') {
+                        box.classList.remove('active', 'filled');
+                        box.classList.add('correct');
+                        box.innerText = char.toUpperCase();
+                    } else if (gameState === 'showing_answer') {
+                        box.classList.remove('active', 'filled');
+                        box.classList.add('wrong');
+                        box.innerText = char.toUpperCase();
+                    }
+
+                    box.onclick = () => {
+                        if (gameState !== 'playing') return;
+                        if (typedItem[currentEditableIdx] !== '') {
+                            typedItem[currentEditableIdx] = ''; 
+                        }
+                        activeGlobalIndex = globalIdx;
+                        renderInlineSentence();
+                        focusHiddenInput();
+                    };
+                    itemSpan.appendChild(box);
+                    editableIndex++;
+                }
+            }
+            container.appendChild(itemSpan);
+
+            // Part 2: " is "
+            const spanIs = document.createElement('span');
+            spanIs.innerText = " is ";
+            spanIs.className = "mx-2";
+            container.appendChild(spanIs);
+
+            // Color Boxes container
+            const colorSpan = document.createElement('span');
+            colorSpan.className = "inline-flex items-center";
+            
+            let colorEditableIndex = 0;
+            const itemEditableTotal = currentItem.replace(/-/g, '').length;
+            
+            for (let j = 0; j < currentColor.length; j++) {
+                const char = currentColor[j];
+                if (char === '-') {
+                    const hyphenEl = document.createElement('span');
+                    hyphenEl.innerText = "-";
+                    hyphenEl.className = "fixed-char";
+                    colorSpan.appendChild(hyphenEl);
+                } else {
+                    const currentEditableIdx = colorEditableIndex;
+                    const globalIdx = itemEditableTotal + currentEditableIdx;
+                    const box = document.createElement('span');
+                    box.className = 'inline-box';
+                    
+                    if (typedColor[currentEditableIdx] !== '') {
+                        box.innerText = typedColor[currentEditableIdx].toUpperCase();
+                        box.classList.add('filled');
+                    } else if (activeGlobalIndex === globalIdx && gameState === 'playing') {
+                        box.classList.add('active');
+                    }
+
+                    if (gameState === 'correct') {
+                        box.classList.remove('active', 'filled');
+                        box.classList.add('correct');
+                        box.innerText = char.toUpperCase();
+                    } else if (gameState === 'showing_answer') {
+                        box.classList.remove('active', 'filled');
+                        box.classList.add('wrong');
+                        box.innerText = char.toUpperCase();
+                    }
+
+                    box.onclick = () => {
+                        if (gameState !== 'playing') return;
+                        if (typedColor[currentEditableIdx] !== '') {
+                            typedColor[currentEditableIdx] = ''; 
+                        }
+                        activeGlobalIndex = globalIdx;
+                        renderInlineSentence();
+                        focusHiddenInput();
+                    };
+                    colorSpan.appendChild(box);
+                    colorEditableIndex++;
+                }
+            }
+            container.appendChild(colorSpan);
+
+            // Part 3: "."
+            const spanDot = document.createElement('span');
+            spanDot.innerText = ".";
+            spanDot.className = "ml-0.5";
+            container.appendChild(spanDot);
+        }
+
+        function handleImageError() {
+            document.getElementById('item-image').classList.add('hidden');
+            document.getElementById('emoji-fallback').classList.remove('hidden');
+        }
+
+        function focusHiddenInput() {
+            const hiddenInput = document.getElementById('hidden-input');
+            hiddenInput.focus();
+        }
+
+        // Handle typing input from hidden input or physical keyboard
+        document.getElementById('hidden-input').addEventListener('input', (e) => {
+            if (gameState !== 'playing') return;
+            const val = e.target.value.toLowerCase().replace(/[^a-z]/g, '');
+            e.target.value = ''; 
+
+            if (val.length === 0) return;
+
+            const char = val[val.length - 1];
+            const itemEditableLen = currentItem.replace(/-/g, '').length;
+            const totalLen = itemEditableLen + currentColor.replace(/-/g, '').length;
+
+            if (activeGlobalIndex < itemEditableLen) {
+                typedItem[activeGlobalIndex] = char;
+            } else {
+                const colorIdx = activeGlobalIndex - itemEditableLen;
+                typedColor[colorIdx] = char;
+            }
+
+            if (activeGlobalIndex < totalLen - 1) {
+                activeGlobalIndex++;
+            }
+
+            renderInlineSentence();
+            focusHiddenInput();
+        });
+
+        function checkAnswer() {
+            if (gameState !== 'playing') return;
+
+            // Reconstruct full words by inserting hyphens back where appropriate for comparison
+            let fullTypedItem = '';
+            let itemEditableIdx = 0;
+            for (let i = 0; i < currentItem.length; i++) {
+                if (currentItem[i] === '-') {
+                    fullTypedItem += '-';
+                } else {
+                    fullTypedItem += (typedItem[itemEditableIdx] || '');
+                    itemEditableIdx++;
+                }
+            }
+
+            let fullTypedColor = '';
+            let colorEditableIdx = 0;
+            for (let i = 0; i < currentColor.length; i++) {
+                if (currentColor[i] === '-') {
+                    fullTypedColor += '-';
+                } else {
+                    fullTypedColor += (typedColor[colorEditableIdx] || '');
+                    colorEditableIdx++;
+                }
+            }
+
+            const itemEditableLen = currentItem.replace(/-/g, '').length;
+            const colorEditableLen = currentColor.replace(/-/g, '').length;
+
+            if (typedItem.length < itemEditableLen || typedColor.length < colorEditableLen || typedItem.includes('') || typedColor.includes('')) {
+                shakeBoxes();
+                showFeedback("Please fill in all blanks!", "text-yellow-600");
+                return;
+            }
+
+            if (fullTypedItem === currentItem && fullTypedColor === currentColor) {
+                gameState = 'correct';
+                stats.correct++;
+                updateStatsUI();
+                renderInlineSentence();
+                
+                const praises = ["Well done!", "Good job!", "Excellent!", "Very good!"];
+                const praise = praises[Math.floor(Math.random() * praises.length)];
+                showFeedback(praise, "text-green-600");
+                
+                playCorrectSfx();
+                setTimeout(() => speak(praise, 1.0), 300);
+
+                showNextButton();
+            } else {
+                wrongAttempts++;
+                playWrongSfx();
+                shakeBoxes();
+                
+                if (wrongAttempts >= 3) {
+                    gameState = 'showing_answer';
+                    stats.wrong++;
+                    updateStatsUI();
+                    renderInlineSentence();
+                    showFeedback("The correct answer is shown above.", "text-red-500");
+                    showNextButton();
+                } else {
+                    showFeedback(`Incorrect! Try again. (${3 - wrongAttempts} attempts left)`, "text-red-500");
+                    setTimeout(() => {
+                        if (gameState === 'playing') {
+                            typedItem = new Array(itemEditableLen).fill('');
+                            typedColor = new Array(colorEditableLen).fill('');
+                            activeGlobalIndex = 0;
+                            renderInlineSentence();
+                            focusHiddenInput();
+                            resetFeedback();
+                        }
+                    }, 1400);
+                }
+            }
+        }
+
+        function shakeBoxes() {
+            const container = document.getElementById('sentence-inline-container');
+            container.classList.remove('shake');
+            void container.offsetWidth;
+            container.classList.add('shake');
+        }
+
+        function showFeedback(text, colorClass) {
+            const fb = document.getElementById('feedback-text');
+            fb.innerText = text;
+            fb.className = `h-6 text-sm sm:text-base font-bold mt-4 transition-opacity duration-300 opacity-100 ${colorClass}`;
+        }
+
+        function resetFeedback() {
+            const fb = document.getElementById('feedback-text');
+            fb.classList.remove('opacity-100');
+            fb.classList.add('opacity-0');
+        }
+
+        function showNextButton() {
+            document.getElementById('check-btn').classList.add('hidden');
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function updateStatsUI() {
+            document.getElementById('score-correct').innerText = stats.correct;
+            document.getElementById('score-wrong').innerText = stats.wrong;
+        }
+
+        function nextQuestion() {
+            currentIndex++;
+            if (currentIndex < gameQuestions.length) {
+                loadQuestion();
+            } else {
+                finishGame();
+            }
+        }
+
+        function finishGame() {
+            gameState = 'finished';
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('flex');
+            
+            document.getElementById('result-screen').classList.remove('hidden');
+            document.getElementById('result-screen').classList.add('flex');
+            
+            document.getElementById('final-correct').innerText = stats.correct;
+            document.getElementById('final-wrong').innerText = stats.wrong;
+            
+            speak("Practice completed! Check your final score.", 1.0);
+        }
+
+        // Global Keyboard Event Listener for Navigation & Shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.altKey || e.metaKey) {
+                if (e.ctrlKey && e.code === 'Space') {
+                    e.preventDefault();
+                    playCurrentAudio();
+                }
+                return;
+            }
+
+            if (gameState === 'correct' || gameState === 'showing_answer') {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    nextQuestion();
+                }
+                return;
+            }
+
+            if (gameState !== 'playing') return;
+
+            const itemEditableLen = currentItem.replace(/-/g, '').length;
+            const totalLen = itemEditableLen + currentColor.replace(/-/g, '').length;
+
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                checkAnswer();
+            } else if (e.key === 'Backspace') {
+                e.preventDefault();
+                if (activeGlobalIndex < itemEditableLen) {
+                    if (typedItem[activeGlobalIndex] !== '') {
+                        typedItem[activeGlobalIndex] = '';
+                    } else if (activeGlobalIndex > 0) {
+                        activeGlobalIndex--;
+                        typedItem[activeGlobalIndex] = '';
+                    }
+                } else {
+                    const colorIdx = activeGlobalIndex - itemEditableLen;
+                    if (typedColor[colorIdx] !== '') {
+                        typedColor[colorIdx] = '';
+                    } else if (activeGlobalIndex > 0) {
+                        activeGlobalIndex--;
+                        if (activeGlobalIndex < itemEditableLen) {
+                            typedItem[activeGlobalIndex] = '';
+                        } else {
+                            typedColor[activeGlobalIndex - itemEditableLen] = '';
+                        }
+                    }
+                }
+                renderInlineSentence();
+                focusHiddenInput();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                if (activeGlobalIndex > 0) {
+                    activeGlobalIndex--;
+                    renderInlineSentence();
+                    focusHiddenInput();
+                }
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                if (activeGlobalIndex < totalLen - 1) {
+                    activeGlobalIndex++;
+                    renderInlineSentence();
+                    focusHiddenInput();
+                }
+            }
+        });
+
+        window.speechSynthesis.onvoiceschanged = () => {
+            window.speechSynthesis.getVoices();
+        };
+    </script>
+</body>
+</html>
