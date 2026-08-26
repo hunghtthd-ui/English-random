@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animal Color Quiz - Interactive English Exercise</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#4F46E5',
+                            pink: '#EC4899',
+                            yellow: '#F59E0B',
+                            green: '#10B981',
+                            purple: '#8B5CF6',
+                            bg: '#F3F4F6'
+                        }
+                    },
+                    fontFamily: {
+                        heading: ['Fredoka', 'sans-serif'],
+                        body: ['Nunito', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #F0F4F8;
+            user-select: none;
+        }
+
+        .font-heading {
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        /* Custom shake animation for wrong answers */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+
+        .animate-shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        /* Pop animation for correct feedback */
+        @keyframes pop {
+            0% { transform: scale(0.8); opacity: 0; }
+            70% { transform: scale(1.08); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .animate-pop {
+            animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        /* Pulse glow for primary buttons */
+        .pulse-glow {
+            box-shadow: 0 0 15px rgba(79, 70, 229, 0.4);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-slate-800">
+
+    <!-- Header / Navbar -->
+    <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-xl font-bold shadow-md">
+                    <i class="fa-solid fa-paw"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold font-heading text-indigo-900 tracking-wide">Animal Color Quiz</h1>
+                    <p class="text-xs text-slate-500 font-semibold hidden sm:block">Practice English Animal Colors</p>
+                </div>
+            </div>
+
+            <!-- Header Controls -->
+            <div class="flex items-center gap-3">
+                <!-- Part Indicator Badge -->
+                <div id="partBadge" class="bg-indigo-100 text-indigo-800 text-xs sm:text-sm font-bold px-3 py-1.5 rounded-full flex items-center gap-2 border border-indigo-200">
+                    <i class="fa-solid fa-list-check text-indigo-600"></i>
+                    <span id="partBadgeText">Part 1: Yes / No</span>
+                </div>
+
+                <!-- Sound Effects Toggle Button -->
+                <button id="voiceToggleBtn" onclick="toggleMute()" class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center gap-2 text-sm font-semibold" title="Toggle Sound Effects">
+                    <i id="voiceIcon" class="fa-solid fa-volume-high text-indigo-600"></i>
+                    <span class="hidden md:inline">Sound</span>
+                </button>
+
+                <!-- Restart Button -->
+                <button onclick="confirmRestart()" class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 transition text-sm font-bold flex items-center gap-1.5">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span class="hidden sm:inline">Reset</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col justify-center">
+        
+        <!-- Overall Progress Bar Container -->
+        <div class="mb-6 bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-xs sm:text-sm font-bold text-slate-600 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-bullseye text-indigo-500"></i>
+                    <span id="progressText">Progress: Question 1 of 15</span>
+                </span>
+                <span id="scoreBadge" class="text-xs sm:text-sm font-extrabold text-emerald-600 bg-emerald-50 px-3 py-0.5 rounded-full border border-emerald-200">
+                    Correct: 0
+                </span>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden p-0.5 border border-slate-200">
+                <div id="progressBar" class="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full transition-all duration-500 w-0"></div>
+            </div>
+        </div>
+
+        <!-- Split View Layout: Left Image / Right Questions -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <!-- Left Side: Interactive Animal Illustration View -->
+            <div class="lg:col-span-6 bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-slate-200 flex flex-col items-center relative group">
+                <div class="w-full flex items-center justify-between mb-3 px-1">
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-image text-indigo-500"></i> Reference Illustration
+                    </span>
+                    <button onclick="openImageModal()" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1 rounded-lg transition flex items-center gap-1">
+                        <i class="fa-solid fa-expand"></i> Zoom Image
+                    </button>
+                </div>
+
+                <!-- Image Wrapper with Fallback -->
+                <div class="w-full overflow-hidden rounded-2xl border-2 border-indigo-100 bg-slate-50 relative min-h-[260px] sm:min-h-[380px] flex items-center justify-center">
+                    <img id="mainAnimalImage" 
+                         src="image_1f8afd.jpg" 
+                         alt="Animals in farm and jungle illustration" 
+                         class="w-full h-auto object-contain max-h-[500px] cursor-pointer hover:scale-[1.02] transition-transform duration-300"
+                         onclick="openImageModal()"
+                         onerror="handleImageError(this)" />
+
+                    <!-- Fallback Overlay if Image file not present in standard path -->
+                    <div id="imageFallback" class="hidden absolute inset-0 bg-slate-100 p-6 flex flex-col items-center justify-center text-center">
+                        <i class="fa-solid fa-file-image text-4xl text-slate-400 mb-2"></i>
+                        <p class="text-sm font-bold text-slate-600 mb-1">Image standard path missing</p>
+                        <p class="text-xs text-slate-500 mb-3">Please keep <code class="bg-slate-200 px-1 py-0.5 rounded">image_1f8afd.jpg</code> or <code class="bg-slate-200 px-1 py-0.5 rounded">image.jpg</code> in the same folder as this HTML file on GitHub.</p>
+                        <label class="cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow">
+                            <i class="fa-solid fa-upload mr-1"></i> Choose Local Image
+                            <input type="file" accept="image/*" class="hidden" onchange="loadLocalImage(event)">
+                        </label>
+                    </div>
+                </div>
+
+                <p class="text-xs text-slate-400 mt-2 text-center">
+                    <i class="fa-solid fa-circle-info"></i> Look closely at the colors of animals in the picture to answer.
+                </p>
+            </div>
+
+            <!-- Right Side: Interactive Question Box -->
+            <div class="lg:col-span-6 bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 flex flex-col min-h-[420px] justify-between relative">
+                
+                <!-- Question Header -->
+                <div>
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
+                        <div class="flex items-center gap-2">
+                            <span id="questionStepTag" class="bg-indigo-50 text-indigo-700 font-extrabold text-xs px-3 py-1 rounded-full uppercase border border-indigo-100">
+                                Question 1
+                            </span>
+                            <span id="attemptTag" class="hidden bg-amber-50 text-amber-700 font-bold text-xs px-2.5 py-1 rounded-full border border-amber-200">
+                                Attempt 1/3
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Question Prompt Display -->
+                    <div class="my-4 text-center">
+                        <p id="partInstruction" class="text-sm font-semibold text-slate-500 mb-2">
+                            Is this statement correct according to the picture?
+                        </p>
+                        
+                        <!-- Main Sentence Display with Inline Input -->
+                        <form id="part2Form" onsubmit="handlePart2Submit(event)">
+                            <div id="questionText" class="text-2xl sm:text-3xl font-extrabold font-heading text-slate-800 leading-snug py-6 px-4 bg-slate-50 rounded-2xl border border-slate-100 min-h-[110px] flex items-center justify-center flex-wrap gap-2">
+                                Loading question...
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Dynamic Answer Input Area -->
+
+                    <!-- PART 1 CONTAINER: Yes / No Buttons -->
+                    <div id="part1Container" class="mt-6">
+                        <div class="grid grid-cols-2 gap-4">
+                            <button id="btnYes" onclick="submitPart1Answer(true)" class="py-4 px-6 rounded-2xl font-heading font-extrabold text-xl sm:text-2xl bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white shadow-lg hover:shadow-emerald-200 transition transform active:scale-95 flex flex-col items-center justify-center gap-1">
+                                <span><i class="fa-solid fa-circle-check"></i> YES</span>
+                                <span class="text-xs font-normal opacity-90">(True)</span>
+                            </button>
+                            <button id="btnNo" onclick="submitPart1Answer(false)" class="py-4 px-6 rounded-2xl font-heading font-extrabold text-xl sm:text-2xl bg-rose-500 hover:bg-rose-600 active:bg-rose-700 text-white shadow-lg hover:shadow-rose-200 transition transform active:scale-95 flex flex-col items-center justify-center gap-1">
+                                <span><i class="fa-solid fa-circle-xmark"></i> NO</span>
+                                <span class="text-xs font-normal opacity-90">(False)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- PART 2 CONTAINER: Submit Button & Keyboard Hint -->
+                    <div id="part2Container" class="mt-6 hidden">
+                        <div class="flex flex-col gap-2">
+                            <button type="submit" form="part2Form" id="checkPart2Btn" class="w-full py-4 px-6 bg-indigo-600 hover:bg-indigo-700 text-white font-heading font-bold text-lg rounded-2xl shadow-md transition transform active:scale-95 flex items-center justify-center gap-2">
+                                <span>Check Answer</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                            <p class="text-xs text-slate-400 text-center">
+                                Type the color in the blank above and press <kbd class="px-1.5 py-0.5 bg-slate-200 rounded text-slate-700 font-mono text-[10px]">Enter</kbd> or click Check
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feedback & Solution Display Area -->
+                <div id="feedbackArea" class="mt-6 min-h-[100px] flex flex-col justify-end">
+                    
+                    <!-- Praise / Success Banner -->
+                    <div id="successBanner" class="hidden bg-emerald-50 border-2 border-emerald-300 p-4 rounded-2xl text-center animate-pop">
+                        <div class="text-emerald-700 font-heading font-extrabold text-2xl mb-1 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-face-laugh-beam text-3xl"></i>
+                            <span id="praiseText">Well done!</span>
+                        </div>
+                        <p id="successDetail" class="text-sm font-bold text-emerald-800 mb-3">That is correct!</p>
+                        <button id="nextBtn" onclick="nextQuestion()" class="w-full py-3 px-6 bg-emerald-600 hover:bg-emerald-700 text-white font-heading font-bold text-lg rounded-xl shadow transition transform active:scale-95 flex items-center justify-center gap-2 pulse-glow">
+                            <span>Next Question</span>
+                            <i class="fa-solid fa-circle-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- Incorrect Banner -->
+                    <div id="errorBanner" class="hidden bg-rose-50 border-2 border-rose-300 p-4 rounded-2xl text-center animate-shake">
+                        <div class="text-rose-700 font-heading font-extrabold text-lg mb-1 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+                            <span>Not quite right!</span>
+                        </div>
+                        <p id="errorMessage" class="text-xs sm:text-sm font-semibold text-rose-800">
+                            Please try again! Look carefully at the picture.
+                        </p>
+                    </div>
+
+                    <!-- Max Attempts Reveal Answer Banner -->
+                    <div id="revealBanner" class="hidden bg-amber-50 border-2 border-amber-300 p-4 rounded-2xl text-center animate-pop">
+                        <div class="text-amber-800 font-heading font-extrabold text-lg mb-1 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-lightbulb text-amber-500 text-2xl"></i>
+                            <span>Correct Answer Revealed!</span>
+                        </div>
+                        <p class="text-sm text-amber-900 font-semibold mb-2">
+                            The correct answer is: <strong id="revealedAnswerText" class="text-indigo-700 font-extrabold underline">...</strong>
+                        </p>
+                        <button onclick="nextQuestion()" class="w-full py-2.5 px-6 bg-amber-600 hover:bg-amber-700 text-white font-heading font-bold text-base rounded-xl shadow transition transform active:scale-95 flex items-center justify-center gap-2">
+                            <span>Continue to Next</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Quiz Completion / Statistics Summary Modal -->
+    <div id="summaryModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-100 animate-pop text-center relative overflow-hidden">
+            
+            <!-- Confetti / Celebration Header -->
+            <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl shadow-inner">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+
+            <h2 class="text-3xl font-extrabold font-heading text-slate-800 mb-1">Quiz Completed!</h2>
+            <p class="text-sm font-semibold text-slate-500 mb-6">Great job finishing both Part 1 and Part 2!</p>
+
+            <!-- Score Summary Cards Grid -->
+            <div class="grid grid-cols-2 gap-3 mb-6">
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <p class="text-xs font-bold text-slate-500 uppercase">Part 1 (Yes/No)</p>
+                    <p id="statP1" class="text-2xl font-extrabold font-heading text-indigo-600 mt-1">9 / 9</p>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <p class="text-xs font-bold text-slate-500 uppercase">Part 2 (Fill Blank)</p>
+                    <p id="statP2" class="text-2xl font-extrabold font-heading text-purple-600 mt-1">6 / 6</p>
+                </div>
+                <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-200">
+                    <p class="text-xs font-bold text-emerald-700 uppercase">Accuracy Rate</p>
+                    <p id="statAccuracy" class="text-2xl font-extrabold font-heading text-emerald-600 mt-1">100%</p>
+                </div>
+                <div class="bg-amber-50 p-4 rounded-2xl border border-amber-200">
+                    <p class="text-xs font-bold text-amber-700 uppercase">Total Wrong Tries</p>
+                    <p id="statIncorrect" class="text-2xl font-extrabold font-heading text-amber-600 mt-1">0</p>
+                </div>
+            </div>
+
+            <!-- Praise message -->
+            <p id="finalPraise" class="text-base font-extrabold text-indigo-700 mb-6">
+                🌟 Outstanding performance! You know all your animal colors!
+            </p>
+
+            <button onclick="restartQuiz()" class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-heading font-extrabold text-lg rounded-2xl shadow-lg transition transform active:scale-95 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-rotate-right"></i>
+                <span>Play Again (New Order)</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Fullscreen Image Zoom Modal -->
+    <div id="imageModal" class="fixed inset-0 bg-slate-900/90 z-50 hidden flex flex-col items-center justify-center p-4" onclick="closeImageModal()">
+        <div class="absolute top-4 right-4 z-10">
+            <button onclick="closeImageModal()" class="bg-white/20 hover:bg-white/40 text-white p-3 rounded-full text-xl transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <img id="modalImage" src="image_1f8afd.jpg" alt="Zoomed Animal Illustration" class="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl" onclick="event.stopPropagation()">
+        <p class="text-white/80 text-xs mt-3 font-semibold">Click outside or press ESC to close</p>
+    </div>
+
+
+    <!-- JavaScript Logic Application Script -->
+    <script>
+        
+        // --- DATASET DEFINITIONS --- //
+        
+        // Part 1 Questions (Yes / No True/False)
+        const RAW_PART_1_QUESTIONS = [
+            { id: 'p1_1', statement: 'The lion is pink.', answer: true, explanation: 'The lion is indeed pink!' },
+            { id: 'p1_2', statement: 'The tiger is orange.', answer: false, explanation: 'The tiger is purple in the picture!' },
+            { id: 'p1_3', statement: 'The bear is green.', answer: true, explanation: 'The bear is green!' },
+            { id: 'p1_4', statement: 'The giraffe is purple and white.', answer: false, explanation: 'The giraffe is yellow with blue spots!' },
+            { id: 'p1_5', statement: 'The chicken is red.', answer: false, explanation: 'The chicken is blue!' },
+            { id: 'p1_6', statement: 'The cow is purple.', answer: true, explanation: 'The cow is purple!' },
+            { id: 'p1_7', statement: 'The sheep is black.', answer: false, explanation: 'The sheep is turquoise/light blue!' },
+            { id: 'p1_8', statement: 'The pig is yellow.', answer: true, explanation: 'The pig is yellow!' },
+            { id: 'p1_9', statement: 'The octopus is orange.', answer: true, explanation: 'The octopus is orange!' }
+        ];
+
+        // Part 2 Questions (Fill in the blank inline)
+        const RAW_PART_2_QUESTIONS = [
+            { id: 'p2_1', animal: 'dog', color: 'orange', sentence: 'The dog is orange.' },
+            { id: 'p2_2', animal: 'duck', color: 'purple', sentence: 'The duck is purple.' },
+            { id: 'p2_3', animal: 'cat', color: 'green', sentence: 'The cat is green.' },
+            { id: 'p2_4', animal: 'dolphin', color: 'yellow', sentence: 'The dolphin is yellow.' },
+            { id: 'p2_5', animal: 'rabbit', color: 'blue', sentence: 'The rabbit is blue.' },
+            { id: 'p2_6', animal: 'horse', color: 'pink', sentence: 'The horse is pink.' }
+        ];
+
+        // Praise vocabulary list
+        const PRAISE_WORDS = ["Well done!", "Good job!", "Excellent!", "Very good!"];
+
+        // --- GLOBAL APP STATE --- //
+        let currentPart = 1; // 1 or 2
+        let currentPart1Index = 0;
+        let currentPart2Index = 0;
+        
+        let shuffledPart1 = [];
+        let shuffledPart2 = [];
+
+        let wrongAttemptsCount = 0;
+        let isAudioMuted = false;
+        let isAnswered = false;
+
+        // Statistics tracker
+        let stats = {
+            p1Correct: 0,
+            p1IncorrectAttempts: 0,
+            p2Correct: 0,
+            p2IncorrectAttempts: 0
+        };
+
+        // Custom Web Audio API Sound Generator for Feedback Chimes
+        function playAudioTone(type) {
+            if (isAudioMuted) return;
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'correct') {
+                    // Happy double chime ding
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+                    osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.12); // E5
+                    osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.24); // G5
+                    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.6);
+                } else if (type === 'wrong') {
+                    // Soft error low tone
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(220, ctx.currentTime); // A3
+                    osc.frequency.setValueAtTime(180, ctx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.25, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.4);
+                }
+            } catch (e) {
+                console.log('Web Audio API initialized on user gesture');
+            }
+        }
+
+
+        // Array Shuffle Helper (Fisher-Yates)
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // Image loading error fallback handler
+        function handleImageError(imgElement) {
+            if (imgElement.src.includes('image_1f8afd.jpg')) {
+                imgElement.src = 'image.jpg';
+            } else if (imgElement.src.includes('image.jpg')) {
+                imgElement.src = 'animal_image.png';
+            } else {
+                imgElement.classList.add('hidden');
+                document.getElementById('imageFallback').classList.remove('hidden');
+            }
+        }
+
+        // Load local custom image from file input
+        function loadLocalImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById('mainAnimalImage');
+                    const modalImg = document.getElementById('modalImage');
+                    img.src = e.target.result;
+                    modalImg.src = e.target.result;
+                    img.classList.remove('hidden');
+                    document.getElementById('imageFallback').classList.add('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+
+        // Initialize or Restart Quiz State
+        function initQuiz() {
+            currentPart = 1;
+            currentPart1Index = 0;
+            currentPart2Index = 0;
+            wrongAttemptsCount = 0;
+            isAnswered = false;
+
+            stats = {
+                p1Correct: 0,
+                p1IncorrectAttempts: 0,
+                p2Correct: 0,
+                p2IncorrectAttempts: 0
+            };
+
+            // Shuffle both question sets independently
+            shuffledPart1 = shuffleArray(RAW_PART_1_QUESTIONS);
+            shuffledPart2 = shuffleArray(RAW_PART_2_QUESTIONS);
+
+            document.getElementById('summaryModal').classList.add('hidden');
+            renderCurrentQuestion();
+        }
+
+        // Render Current Question View
+        function renderCurrentQuestion() {
+            isAnswered = false;
+            wrongAttemptsCount = 0;
+            hideAllBanners();
+
+            const totalQuestions = shuffledPart1.length + shuffledPart2.length;
+            const qContainer = document.getElementById('questionText');
+            
+            if (currentPart === 1) {
+                // PART 1 SETUP
+                const q = shuffledPart1[currentPart1Index];
+                const globalIndex = currentPart1Index + 1;
+
+                // Update Badges & Instructions
+                document.getElementById('partBadgeText').textContent = "Part 1: Yes / No";
+                document.getElementById('questionStepTag').textContent = `Question ${globalIndex} of ${totalQuestions}`;
+                document.getElementById('partInstruction').textContent = "Look at the picture. Is this statement true or false?";
+                
+                qContainer.innerHTML = `<span>"${q.statement}"</span>`;
+
+                // Show/Hide Containers
+                document.getElementById('part1Container').classList.remove('hidden');
+                document.getElementById('part2Container').classList.add('hidden');
+
+                // Enable buttons
+                document.getElementById('btnYes').disabled = false;
+                document.getElementById('btnNo').disabled = false;
+
+                // Update Progress Bar
+                updateProgress(globalIndex, totalQuestions);
+
+            } else {
+                // PART 2 SETUP (Inline blank in sentence)
+                const q = shuffledPart2[currentPart2Index];
+                const globalIndex = shuffledPart1.length + currentPart2Index + 1;
+
+                // Update Badges & Instructions
+                document.getElementById('partBadgeText').textContent = "Part 2: Fill in the Blank";
+                document.getElementById('questionStepTag').textContent = `Question ${globalIndex} of ${totalQuestions}`;
+                document.getElementById('partInstruction').textContent = "Type the missing color directly into the blank line:";
+                
+                // Format prompt with inline <input> element directly inside sentence
+                qContainer.innerHTML = `
+                    <span class="inline-flex items-center gap-2 flex-wrap justify-center">
+                        <span>The <span class="text-indigo-600 capitalize underline decoration-indigo-300 decoration-wavy">${q.animal}</span> is</span> 
+                        <input type="text" 
+                               id="colorInput" 
+                               autocomplete="off" 
+                               placeholder="color..." 
+                               class="w-36 sm:w-44 px-3 py-1 text-center font-bold text-indigo-800 bg-white border-b-4 border-indigo-500 focus:outline-none focus:border-indigo-700 focus:bg-indigo-50/50 rounded-xl shadow-inner transition text-2xl sm:text-3xl mx-1" />
+                        <span>.</span>
+                    </span>
+                `;
+
+                // Show/Hide Containers
+                document.getElementById('part1Container').classList.add('hidden');
+                document.getElementById('part2Container').classList.remove('hidden');
+
+                // Reset & focus input field directly
+                setTimeout(() => {
+                    const colorInput = document.getElementById('colorInput');
+                    if (colorInput) {
+                        colorInput.value = '';
+                        colorInput.disabled = false;
+                        colorInput.focus();
+                    }
+                }, 50);
+
+                document.getElementById('checkPart2Btn').disabled = false;
+
+                // Update Progress Bar
+                updateProgress(globalIndex, totalQuestions);
+            }
+
+            updateAttemptTag();
+            updateScoreBadge();
+        }
+
+        // Update overall progress bar width
+        function updateProgress(current, total) {
+            const percentage = Math.round(((current - 1) / total) * 100);
+            document.getElementById('progressBar').style.width = `${percentage}%`;
+            document.getElementById('progressText').textContent = `Progress: Question ${current} of ${total}`;
+        }
+
+        // Update score badge display
+        function updateScoreBadge() {
+            const totalCorrect = stats.p1Correct + stats.p2Correct;
+            document.getElementById('scoreBadge').textContent = `Correct: ${totalCorrect}`;
+        }
+
+        // Update attempt counter tag display
+        function updateAttemptTag() {
+            const attemptTag = document.getElementById('attemptTag');
+            if (wrongAttemptsCount > 0) {
+                attemptTag.classList.remove('hidden');
+                attemptTag.textContent = `Wrong tries: ${wrongAttemptsCount}/3`;
+            } else {
+                attemptTag.classList.add('hidden');
+            }
+        }
+
+        // Hide feedback banners
+        function hideAllBanners() {
+            document.getElementById('successBanner').classList.add('hidden');
+            document.getElementById('errorBanner').classList.add('hidden');
+            document.getElementById('revealBanner').classList.add('hidden');
+        }
+
+
+        // Handle Part 1 (Yes/No) Submission
+        function submitPart1Answer(userChoice) {
+            if (isAnswered) return;
+
+            const q = shuffledPart1[currentPart1Index];
+            const isCorrect = (userChoice === q.answer);
+
+            if (isCorrect) {
+                // Correct Answer
+                isAnswered = true;
+                stats.p1Correct++;
+                document.getElementById('btnYes').disabled = true;
+                document.getElementById('btnNo').disabled = true;
+
+                playAudioTone('correct');
+                showSuccessFeedback(q.explanation);
+
+            } else {
+                // Incorrect Answer
+                stats.p1IncorrectAttempts++;
+                wrongAttemptsCount++;
+                updateAttemptTag();
+
+                playAudioTone('wrong');
+
+                if (wrongAttemptsCount > 3) {
+                    // Failed > 3 times -> Reveal correct answer
+                    isAnswered = true;
+                    document.getElementById('btnYes').disabled = true;
+                    document.getElementById('btnNo').disabled = true;
+                    showRevealAnswer(q.answer ? "YES (True)" : "NO (False)");
+                } else {
+                    // Show error banner & allow immediate retry
+                    showErrorFeedback(`Incorrect! Try again. (${3 - wrongAttemptsCount + 1} attempts left before hint)`);
+                }
+            }
+        }
+
+
+        // Handle Part 2 Form Submit (Check button or Enter key)
+        function handlePart2Submit(event) {
+            if (event) event.preventDefault();
+            if (isAnswered) return;
+
+            const inputField = document.getElementById('colorInput');
+            if (!inputField) return;
+
+            const userTyped = inputField.value.trim().toLowerCase();
+
+            if (!userTyped) {
+                showErrorFeedback("Please type a color in the blank line!");
+                return;
+            }
+
+            const q = shuffledPart2[currentPart2Index];
+            const targetColor = q.color.toLowerCase();
+
+            if (userTyped === targetColor) {
+                // Correct Answer
+                isAnswered = true;
+                stats.p2Correct++;
+                inputField.disabled = true;
+                inputField.classList.add('bg-emerald-100', 'text-emerald-800', 'border-emerald-500');
+                document.getElementById('checkPart2Btn').disabled = true;
+
+                playAudioTone('correct');
+                showSuccessFeedback(`Yes! ${q.sentence}`);
+
+            } else {
+                // Incorrect Answer
+                stats.p2IncorrectAttempts++;
+                wrongAttemptsCount++;
+                updateAttemptTag();
+
+                playAudioTone('wrong');
+
+                if (wrongAttemptsCount > 3) {
+                    // Exceeded 3 wrong attempts -> reveal correct answer
+                    isAnswered = true;
+                    inputField.value = q.color;
+                    inputField.disabled = true;
+                    inputField.classList.add('bg-amber-100', 'text-amber-900', 'border-amber-500');
+                    document.getElementById('checkPart2Btn').disabled = true;
+                    showRevealAnswer(q.color);
+                } else {
+                    // Automatic reset input for re-entry as requested
+                    inputField.value = '';
+                    inputField.focus();
+                    showErrorFeedback(`"${userTyped}" is incorrect. Try again! (${3 - wrongAttemptsCount + 1} attempts left)`);
+                }
+            }
+        }
+
+
+        // Show Success Feedback with random praise
+        function showSuccessFeedback(detailMsg) {
+            hideAllBanners();
+            
+            // Random praise pick
+            const randomPraise = PRAISE_WORDS[Math.floor(Math.random() * PRAISE_WORDS.length)];
+            
+            document.getElementById('praiseText').textContent = randomPraise;
+            document.getElementById('successDetail').textContent = detailMsg;
+            document.getElementById('successBanner').classList.remove('hidden');
+
+            // Focus on next question button for key navigation
+            setTimeout(() => {
+                const nextBtn = document.getElementById('nextBtn');
+                if (nextBtn) nextBtn.focus();
+            }, 100);
+        }
+
+        // Show Temporary Error Feedback
+        function showErrorFeedback(msg) {
+            hideAllBanners();
+            const errorBanner = document.getElementById('errorBanner');
+            document.getElementById('errorMessage').textContent = msg;
+            errorBanner.classList.remove('hidden');
+
+            // Automatically hide error message after 2.5s
+            setTimeout(() => {
+                if (!isAnswered) {
+                    errorBanner.classList.add('hidden');
+                }
+            }, 2500);
+        }
+
+        // Show Answer Reveal when wrong attempts exceed 3
+        function showRevealAnswer(correctAnswerText) {
+            hideAllBanners();
+            document.getElementById('revealedAnswerText').textContent = correctAnswerText;
+            document.getElementById('revealBanner').classList.remove('hidden');
+        }
+
+
+        // Advance to Next Question
+        function nextQuestion() {
+            if (currentPart === 1) {
+                currentPart1Index++;
+                if (currentPart1Index >= shuffledPart1.length) {
+                    // Transition to Part 2!
+                    currentPart = 2;
+                    currentPart2Index = 0;
+                }
+            } else {
+                currentPart2Index++;
+                if (currentPart2Index >= shuffledPart2.length) {
+                    // Quiz Complete! Show summary modal
+                    showSummaryModal();
+                    return;
+                }
+            }
+
+            renderCurrentQuestion();
+        }
+
+        // Show Summary / Statistics Modal
+        function showSummaryModal() {
+            hideAllBanners();
+            
+            // Final progress bar at 100%
+            document.getElementById('progressBar').style.width = '100%';
+
+            const totalQ = shuffledPart1.length + shuffledPart2.length;
+            const totalWrongAttempts = stats.p1IncorrectAttempts + stats.p2IncorrectAttempts;
+
+            document.getElementById('statP1').textContent = `${stats.p1Correct} / ${shuffledPart1.length}`;
+            document.getElementById('statP2').textContent = `${stats.p2Correct} / ${shuffledPart2.length}`;
+            document.getElementById('statIncorrect').textContent = totalWrongAttempts;
+
+            // Accuracy calculation
+            const accuracy = Math.max(0, Math.round((totalQ / (totalQ + totalWrongAttempts)) * 100));
+            document.getElementById('statAccuracy').textContent = `${accuracy}%`;
+
+            // Praise message based on wrong tries
+            const praiseElem = document.getElementById('finalPraise');
+            if (totalWrongAttempts === 0) {
+                praiseElem.textContent = "🏆 Perfect Score! You got everything right on your first try!";
+            } else if (totalWrongAttempts <= 3) {
+                praiseElem.textContent = "🌟 Excellent effort! You finished all animal color questions!";
+            } else {
+                praiseElem.textContent = "👍 Good job completing the practice! Keep practicing to get 100%!";
+            }
+
+            document.getElementById('summaryModal').classList.remove('hidden');
+            playAudioTone('correct');
+        }
+
+        // Toggle Audio Mute State
+        function toggleMute() {
+            isAudioMuted = !isAudioMuted;
+            const voiceIcon = document.getElementById('voiceIcon');
+            const voiceBtn = document.getElementById('voiceToggleBtn');
+
+            if (isAudioMuted) {
+                voiceIcon.className = "fa-solid fa-volume-xmark text-rose-500";
+                voiceBtn.classList.add('bg-rose-50', 'text-rose-700');
+            } else {
+                voiceIcon.className = "fa-solid fa-volume-high text-indigo-600";
+                voiceBtn.classList.remove('bg-rose-50', 'text-rose-700');
+            }
+        }
+
+        // Confirm Restart
+        function confirmRestart() {
+            initQuiz();
+        }
+
+        // Modal Image Zoom Controls
+        function openImageModal() {
+            document.getElementById('imageModal').classList.remove('hidden');
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').classList.add('hidden');
+        }
+
+
+        // Global Keyboard Event Listeners for Desktop convenience
+        document.addEventListener('keydown', function(e) {
+            // Escape closes image modal
+            if (e.key === 'Escape') {
+                closeImageModal();
+            }
+
+            // Next button trigger on Enter if success banner active
+            const successBanner = document.getElementById('successBanner');
+            const revealBanner = document.getElementById('revealBanner');
+            
+            if (e.key === 'Enter' && (!successBanner.classList.contains('hidden') || !revealBanner.classList.contains('hidden'))) {
+                e.preventDefault();
+                nextQuestion();
+                return;
+            }
+
+            // Keyboard shortcuts for Part 1 (Yes/No)
+            if (currentPart === 1 && !isAnswered) {
+                if (e.key === 'y' || e.key === 'Y' || e.key === '1') {
+                    submitPart1Answer(true);
+                } else if (e.key === 'n' || e.key === 'N' || e.key === '2') {
+                    submitPart1Answer(false);
+                }
+            }
+        });
+
+        // Initialize App on Window Load
+        window.onload = function() {
+            initQuiz();
+        };
+
+    </script>
+</body>
+</html>
