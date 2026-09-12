@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparative and Superlative Practice</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+            min-height: 100vh;
+        }
+        
+        /* Custom animations */
+        @keyframes popIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+        
+        .animate-pop {
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .animate-shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        /* Glassmorphism utility */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4 md:p-6 text-slate-800 antialiased selection:bg-indigo-500 selection:text-white">
+
+    <div class="w-full max-w-3xl min-h-[620px] flex flex-col justify-between glass-card rounded-3xl p-6 md:p-10 relative overflow-hidden transition-all duration-300">
+        
+        <!-- Background Decorative Orbs -->
+        <div class="absolute -top-24 -left-24 w-48 h-48 bg-purple-400 rounded-full filter blur-3xl opacity-20 pointer-events-none"></div>
+        <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-indigo-400 rounded-full filter blur-3xl opacity-20 pointer-events-none"></div>
+
+        <!-- APP HEADER CONTAINER -->
+        <header id="app-header" class="hidden mb-6 flex flex-col sm:flex-row justify-between items-center gap-4 border-b border-slate-200 pb-4">
+            <div>
+                <span id="part-badge" class="px-3 py-1 bg-indigo-100 text-indigo-700 font-bold text-xs uppercase tracking-wider rounded-full">
+                    Part 1 of 4
+                </span>
+                <h2 id="part-title" class="text-xl md:text-2xl font-extrabold text-slate-900 mt-1"></h2>
+                <p id="part-subtitle" class="text-sm font-medium text-slate-500"></p>
+            </div>
+            
+            <!-- Progress & Stats indicator -->
+            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+                <div class="text-right">
+                    <div class="text-xs font-semibold text-slate-400 uppercase">Progress</div>
+                    <div id="progress-text" class="text-sm font-bold text-slate-700">1 / 7</div>
+                </div>
+                <div class="w-24 bg-slate-100 h-3 rounded-full overflow-hidden border border-slate-200">
+                    <div id="progress-bar" class="bg-indigo-600 h-full w-0 transition-all duration-300"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN DYNAMIC CONTENT CONTAINER -->
+        <main id="main-container" class="flex-grow flex flex-col justify-center">
+
+            <!-- 1. WELCOME COVER SCREEN -->
+            <section id="screen-welcome" class="text-center py-8 animate-pop">
+                <div class="inline-flex p-4 bg-indigo-50 rounded-2xl text-indigo-600 mb-6 shadow-inner">
+                    <i class="fa-solid fa-graduation-cap text-5xl"></i>
+                </div>
+                <h1 class="text-3xl md:text-5xl font-black text-slate-900 tracking-tight mb-2">
+                    Comparative and Superlative
+                </h1>
+                <p class="text-lg md:text-xl font-semibold text-indigo-600 mb-8">
+                    So sánh hơn và So sánh nhất
+                </p>
+
+                <div class="bg-indigo-50/60 rounded-2xl p-5 mb-8 text-left max-w-md mx-auto border border-indigo-100/80 text-sm text-slate-600 space-y-2">
+                    <div class="flex items-center gap-2 font-bold text-slate-800">
+                        <i class="fa-solid fa-circle-info text-indigo-500"></i> Instructions / Hướng dẫn:
+                    </div>
+                    <ul class="list-disc list-inside space-y-1 pl-1">
+                        <li>Complete 4 parts in sequential order.</li>
+                        <li>You have <strong>3 attempts</strong> per question.</li>
+                        <li>Audio will read correct answers in Parts 1, 2 & 3.</li>
+                        <li>Press <kbd class="px-1.5 py-0.5 text-xs bg-white rounded border border-slate-300 font-mono shadow-sm">Enter</kbd> on keyboard to quickly check answers.</li>
+                    </ul>
+                </div>
+
+                <button id="btn-start" onclick="quizApp.startQuiz()" class="px-10 py-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold text-lg rounded-2xl shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all transform hover:-translate-y-0.5 active:translate-y-0">
+                    Bắt đầu <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+            </section>
+
+            <!-- 2. QUESTION CAROUSEL SCREEN -->
+            <section id="screen-quiz" class="hidden flex-grow flex flex-col justify-between py-2">
+                
+                <!-- Question Card Container -->
+                <div id="question-card" class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-100 transition-all">
+                    
+                    <!-- Attempts Left Header -->
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="flex items-center gap-1.5 text-xs font-bold text-slate-400">
+                            <span>ATTEMPTS:</span>
+                            <div id="attempts-dots" class="flex gap-1">
+                                <!-- Rendered dynamically -->
+                            </div>
+                        </div>
+                        <button id="btn-audio-repeat" onclick="quizApp.repeatTTS()" class="hidden text-indigo-600 hover:text-indigo-800 text-sm font-semibold flex items-center gap-1">
+                            <i class="fa-solid fa-volume-high"></i> Listen
+                        </button>
+                    </div>
+
+                    <!-- Question Prompt Text -->
+                    <div id="question-text-container" class="mb-6">
+                        <h3 id="question-prompt" class="text-xl md:text-2xl font-bold text-slate-800 leading-relaxed">
+                            <!-- Question text dynamically injected here -->
+                        </h3>
+                    </div>
+
+                    <!-- Answer Options / Input Field Area -->
+                    <div id="answer-area" class="mt-4">
+                        <!-- Rendered by JS based on Question Type -->
+                    </div>
+
+                    <!-- Answer Feedback Banner -->
+                    <div id="feedback-banner" class="hidden mt-6 p-4 rounded-xl text-sm font-semibold animate-pop">
+                        <!-- Success / Error / Answer display -->
+                    </div>
+                </div>
+
+                <!-- Footer Navigation Controls -->
+                <div id="quiz-controls" class="mt-6 flex justify-between items-center">
+                    <div></div> <!-- Placeholder for alignment -->
+                    <button id="btn-action" onclick="quizApp.handleMainAction()" class="px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base rounded-xl shadow-md shadow-indigo-500/20 transition-all flex items-center gap-2">
+                        <span>Check</span> <i class="fa-solid fa-check"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- 3. SUMMARY RESULT SCREEN -->
+            <section id="screen-summary" class="hidden text-center py-6 animate-pop">
+                <div class="inline-flex p-4 bg-emerald-100 rounded-full text-emerald-600 mb-4">
+                    <i class="fa-solid fa-trophy text-4xl"></i>
+                </div>
+                <h1 class="text-3xl font-black text-slate-900 mb-1">Practice Completed!</h1>
+                <p class="text-slate-500 text-sm mb-6">Here is how you performed today:</p>
+
+                <!-- Score Overview Cards -->
+                <div class="grid grid-cols-2 gap-4 max-w-md mx-auto mb-8">
+                    <div class="bg-indigo-50/70 border border-indigo-100 p-4 rounded-2xl">
+                        <div class="text-3xl font-extrabold text-indigo-600" id="summary-score-pct">0%</div>
+                        <div class="text-xs font-semibold text-indigo-400 uppercase mt-1">Accuracy</div>
+                    </div>
+                    <div class="bg-emerald-50/70 border border-emerald-100 p-4 rounded-2xl">
+                        <div class="text-3xl font-extrabold text-emerald-600" id="summary-score-count">0 / 0</div>
+                        <div class="text-xs font-semibold text-emerald-500 uppercase mt-1">First-Try Correct</div>
+                    </div>
+                </div>
+
+                <!-- Detailed Breakdown per section -->
+                <div class="bg-slate-50 rounded-2xl p-4 text-left border border-slate-200/80 mb-8 max-w-md mx-auto space-y-3">
+                    <h4 class="font-bold text-xs uppercase tracking-wider text-slate-400 mb-2">Section Performance</h4>
+                    <div id="summary-breakdown" class="space-y-2 text-sm">
+                        <!-- Breakdown injected by JS -->
+                    </div>
+                </div>
+
+                <button onclick="quizApp.restartQuiz()" class="px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-md transition-all">
+                    <i class="fa-solid fa-rotate-right mr-2"></i> Try Again
+                </button>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        /**
+         * QUESTION DATA BANK
+         * Organised by 4 sequential parts as required.
+         */
+        const QUIZ_DATA = [
+            // PART 1: Multiple Choice
+            {
+                partId: 1,
+                partTitle: "Choose the best answer",
+                partSubtitle: "Choose the correct answer for each sentence.",
+                type: "mcq",
+                readAudio: true,
+                questions: [
+                    {
+                        prompt: "My new school is ______ than my old school.",
+                        options: ["A. big", "B. bigger", "C. biggest", "D. more big"],
+                        correctIndex: 1,
+                        fullSentence: "My new school is bigger than my old school."
+                    },
+                    {
+                        prompt: "This is ______ classroom in our school.",
+                        options: ["A. large", "B. larger", "C. the largest", "D. the most large"],
+                        correctIndex: 2,
+                        fullSentence: "This is the largest classroom in our school."
+                    },
+                    {
+                        prompt: "English is ______ than Maths for me.",
+                        options: ["A. interesting", "B. more interesting", "C. most interesting", "D. interestinger"],
+                        correctIndex: 1,
+                        fullSentence: "English is more interesting than Maths for me."
+                    },
+                    {
+                        prompt: "My bedroom is ______ than my brother's bedroom.",
+                        options: ["A. clean", "B. cleaner", "C. cleanest", "D. more clean"],
+                        correctIndex: 1,
+                        fullSentence: "My bedroom is cleaner than my brother's bedroom."
+                    },
+                    {
+                        prompt: "This book is ______ than that book.",
+                        options: ["A. funny", "B. more funny", "C. the funniest", "D. funnier"],
+                        correctIndex: 3,
+                        fullSentence: "This book is funnier than that book."
+                    },
+                    {
+                        prompt: "Sunday is ______ day of the week.",
+                        options: ["A. good", "B. better", "C. the best", "D. the goodest"],
+                        correctIndex: 2,
+                        fullSentence: "Sunday is the best day of the week."
+                    },
+                    {
+                        prompt: "This is ______ room in my school. I really like studying here.",
+                        options: ["A. beautiful", "B. more beautiful", "C. the most beautiful", "D. beautifulest"],
+                        correctIndex: 2,
+                        fullSentence: "This is the most beautiful room in my school. I really like studying here."
+                    }
+                ]
+            },
+            // PART 2: Comparative Gap Fill
+            {
+                partId: 2,
+                partTitle: "Comparative",
+                partSubtitle: "So sánh hơn",
+                type: "gap_fill",
+                readAudio: true,
+                questions: [
+                    {
+                        template: "This coffee is {input} than that coffee. (hot)",
+                        acceptableAnswers: ["hotter"],
+                        fullSentence: "This coffee is hotter than that coffee."
+                    },
+                    {
+                        template: "Nam is {input} than his brother at playing football. (good)",
+                        acceptableAnswers: ["better"],
+                        fullSentence: "Nam is better than his brother at playing football."
+                    },
+                    {
+                        template: "The blue bike is {input} than the red one. (cheap)",
+                        acceptableAnswers: ["cheaper"],
+                        fullSentence: "The blue bike is cheaper than the red one."
+                    },
+                    {
+                        template: "My new apartment is {input} than my old one. (comfortable)",
+                        acceptableAnswers: ["more comfortable"],
+                        fullSentence: "My new apartment is more comfortable than my old one."
+                    },
+                    {
+                        template: "The weather today is {input} than yesterday. (bad)",
+                        acceptableAnswers: ["worse"],
+                        fullSentence: "The weather today is worse than yesterday."
+                    }
+                ]
+            },
+            // PART 3: Superlative Gap Fill
+            {
+                partId: 3,
+                partTitle: "Superlative",
+                partSubtitle: "So sánh nhất",
+                type: "gap_fill",
+                readAudio: true,
+                questions: [
+                    {
+                        template: "This is {input} restaurant in my city. (good)",
+                        acceptableAnswers: ["the best", "best"],
+                        fullSentence: "This is the best restaurant in my city."
+                    },
+                    {
+                        template: "Mai is {input} girl in her family. (young)",
+                        acceptableAnswers: ["the youngest", "youngest"],
+                        fullSentence: "Mai is the youngest girl in her family."
+                    },
+                    {
+                        template: "This is {input} street in my town. (noisy)",
+                        acceptableAnswers: ["the noisiest", "noisiest"],
+                        fullSentence: "This is the noisiest street in my town."
+                    },
+                    {
+                        template: "My grandfather is {input} person in my family. (old)",
+                        acceptableAnswers: ["the oldest", "oldest"],
+                        fullSentence: "My grandfather is the oldest person in my family."
+                    }
+                ]
+            },
+            // PART 4: Sentence Rewrite
+            {
+                partId: 4,
+                partTitle: "Rewrite",
+                partSubtitle: "Viết lại câu",
+                type: "rewrite",
+                readAudio: false, // DO NOT read for Part 4 as requested
+                questions: [
+                    {
+                        original: "No student in my class is taller than Nam.",
+                        prefix: "Nam is ",
+                        acceptableAnswers: [
+                            "the tallest student in my class",
+                            "the tallest student in my class."
+                        ]
+                    },
+                    {
+                        original: "My house is smaller than Lan’s house.",
+                        prefix: "Lan’s house is ",
+                        acceptableAnswers: [
+                            "bigger than my house",
+                            "bigger than my house.",
+                            "larger than my house",
+                            "larger than my house."
+                        ]
+                    },
+                    {
+                        original: "No park in my town is more beautiful than this park.",
+                        prefix: "This is ",
+                        acceptableAnswers: [
+                            "the most beautiful park in my town",
+                            "the most beautiful park in my town."
+                        ]
+                    },
+                    {
+                        original: "A bicycle is slower than a motorbike.",
+                        prefix: "A motorbike is ",
+                        acceptableAnswers: [
+                            "faster than a bicycle",
+                            "faster than a bicycle."
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        class SoundEngine {
+            constructor() {
+                this.ctx = null;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    if (AudioContext) {
+                        this.ctx = new AudioContext();
+                    }
+                }
+            }
+
+            playCorrect() {
+                this.init();
+                if (!this.ctx) return;
+                
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.1); // E5
+                osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.2); // G5
+                osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.3); // C6
+
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.5);
+            }
+
+            playIncorrect() {
+                this.init();
+                if (!this.ctx) return;
+
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.linearRampToValueAtTime(110, now + 0.3);
+
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.35);
+            }
+        }
+
+        class VoiceTTS {
+            constructor() {
+                this.synth = window.speechSynthesis;
+                this.preferredVoice = null;
+                this.loadVoices();
+                if (this.synth && this.synth.onvoiceschanged !== undefined) {
+                    this.synth.onvoiceschanged = () => this.loadVoices();
+                }
+            }
+
+            loadVoices() {
+                if (!this.synth) return;
+                const voices = this.synth.getVoices();
+                // Prioritize female English voices
+                this.preferredVoice = voices.find(v => 
+                    v.lang.startsWith('en') && 
+                    (v.name.includes('Female') || v.name.includes('Samantha') || v.name.includes('Zira') || v.name.includes('Victoria') || v.name.includes('Google US English') || v.name.includes('Karen'))
+                ) || voices.find(v => v.lang.startsWith('en')) || null;
+            }
+
+            speak(text) {
+                if (!this.synth) return;
+                this.synth.cancel(); // Cancel active speech
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                if (this.preferredVoice) {
+                    utterance.voice = this.preferredVoice;
+                }
+                utterance.rate = 0.85; // Slow & clear
+                utterance.pitch = 1.0;
+                utterance.lang = 'en-US';
+                this.synth.speak(utterance);
+            }
+        }
+
+        class QuizApp {
+            constructor() {
+                this.sound = new SoundEngine();
+                this.tts = new VoiceTTS();
+                
+                this.praiseList = ["Well done!", "Good job!", "Excellent!", "Very good!"];
+                
+                // Quiz State Variables
+                this.currentPartIndex = 0;
+                this.currentQuestionIndex = 0;
+                this.attemptsLeft = 3;
+                this.isAnswered = false;
+                this.activeQuestions = [];
+                
+                // Score Tracking
+                this.stats = {
+                    totalQuestions: 0,
+                    firstTryCorrect: 0,
+                    partResults: [] // Stores details per section
+                };
+
+                // Bind keyboard listener
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        // Avoid triggering enter if on welcome screen start button
+                        const welcomeScreen = document.getElementById('screen-welcome');
+                        if (welcomeScreen.classList.contains('hidden')) {
+                            this.handleMainAction();
+                        }
+                    }
+                });
+            }
+
+            // Fisher-Yates shuffle algorithm for randomizing question sequence
+            shuffleArray(array) {
+                const arr = [...array];
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                return arr;
+            }
+
+            startQuiz() {
+                // Prepare randomized sequence of questions per section
+                this.preparedData = QUIZ_DATA.map(part => ({
+                    ...part,
+                    questions: this.shuffleArray(part.questions)
+                }));
+
+                this.currentPartIndex = 0;
+                this.currentQuestionIndex = 0;
+                this.stats = {
+                    totalQuestions: QUIZ_DATA.reduce((acc, p) => acc + p.questions.length, 0),
+                    firstTryCorrect: 0,
+                    partResults: QUIZ_DATA.map(p => ({ title: p.partTitle, correct: 0, total: p.questions.length }))
+                };
+
+                // Switch UI screens
+                document.getElementById('screen-welcome').classList.add('hidden');
+                document.getElementById('app-header').classList.remove('hidden');
+                document.getElementById('screen-quiz').classList.remove('hidden');
+
+                this.loadPart();
+            }
+
+            loadPart() {
+                this.activePart = this.preparedData[this.currentPartIndex];
+                this.activeQuestions = this.activePart.questions;
+                this.currentQuestionIndex = 0;
+
+                // Update Header UI
+                document.getElementById('part-badge').innerText = `Part ${this.currentPartIndex + 1} of ${this.preparedData.length}`;
+                document.getElementById('part-title').innerText = this.activePart.partTitle;
+                document.getElementById('part-subtitle').innerText = this.activePart.partSubtitle;
+
+                this.loadQuestion();
+            }
+
+            loadQuestion() {
+                this.attemptsLeft = 3;
+                this.isAnswered = false;
+                this.selectedMCQOption = null;
+
+                const currentQ = this.activeQuestions[this.currentQuestionIndex];
+
+                // Update Progress bar & text
+                const currentGlobalQIndex = this.calcGlobalQuestionIndex() + 1;
+                document.getElementById('progress-text').innerText = `${currentGlobalQIndex} / ${this.stats.totalQuestions}`;
+                const pct = (currentGlobalQIndex / this.stats.totalQuestions) * 100;
+                document.getElementById('progress-bar').style.width = `${pct}%`;
+
+                // Render Attempts Indicator
+                this.renderAttemptsDots();
+
+                // Clear feedback banner
+                const feedbackBanner = document.getElementById('feedback-banner');
+                feedbackBanner.className = "hidden mt-6 p-4 rounded-xl text-sm font-semibold animate-pop";
+                feedbackBanner.innerHTML = "";
+
+                // Hide Audio repeat button by default
+                document.getElementById('btn-audio-repeat').classList.add('hidden');
+
+                // Render Action button state
+                const actionBtn = document.getElementById('btn-action');
+                actionBtn.innerHTML = `<span>Check</span> <i class="fa-solid fa-check"></i>`;
+                actionBtn.className = "px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base rounded-xl shadow-md shadow-indigo-500/20 transition-all flex items-center gap-2";
+
+                // Render Question Prompt & Input area depending on question type
+                const promptEl = document.getElementById('question-prompt');
+                const answerArea = document.getElementById('answer-area');
+
+                if (this.activePart.type === "mcq") {
+                    promptEl.innerText = `${this.currentQuestionIndex + 1}. ${currentQ.prompt}`;
+                    answerArea.innerHTML = `
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            ${currentQ.options.map((opt, idx) => `
+                                <button onclick="quizApp.selectMCQ(${idx})" id="mcq-opt-${idx}" class="mcq-option text-left p-4 rounded-xl border-2 border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/50 font-medium text-slate-700 transition-all">
+                                    ${opt}
+                                </button>
+                            `).join('')}
+                        </div>
+                    `;
+                } else if (this.activePart.type === "gap_fill") {
+                    const parts = currentQ.template.split('{input}');
+                    promptEl.innerHTML = `
+                        <div class="leading-relaxed flex flex-wrap items-center gap-x-2 gap-y-3 text-lg md:text-2xl font-bold text-slate-800">
+                            <span>${this.currentQuestionIndex + 1}. ${parts[0]}</span>
+                            <input type="text" id="gap-input" autocomplete="off" placeholder="..." 
+                                class="inline-block px-3 py-1.5 border-b-4 border-indigo-500 focus:border-indigo-700 bg-indigo-50/70 focus:bg-white text-indigo-950 font-extrabold text-lg md:text-2xl rounded-lg focus:outline-none min-w-[140px] max-w-[220px] text-center transition-all shadow-inner" />
+                            <span>${parts[1] || ''}</span>
+                        </div>
+                    `;
+
+                    answerArea.innerHTML = `
+                        <p class="text-xs font-semibold text-slate-400 italic">
+                            <i class="fa-solid fa-keyboard mr-1"></i> Type directly into the blank space above and press Enter or click Check.
+                        </p>
+                    `;
+                    setTimeout(() => {
+                        const inputField = document.getElementById('gap-input');
+                        if (inputField) inputField.focus();
+                    }, 50);
+                } else if (this.activePart.type === "rewrite") {
+                    promptEl.innerHTML = `
+                        <div class="space-y-4">
+                            <div>
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Sentence ${this.currentQuestionIndex + 1}:</span>
+                                <div class="text-lg md:text-xl font-bold text-slate-800 bg-slate-50 p-3.5 rounded-xl border border-slate-200/80">
+                                    "${currentQ.original}"
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center flex-wrap gap-2 text-lg md:text-xl font-bold text-indigo-950 pt-2">
+                                <span class="text-indigo-600 font-extrabold text-2xl">→</span>
+                                <span>${currentQ.prefix}</span>
+                                <input type="text" id="rewrite-input" autocomplete="off" placeholder="..." 
+                                    class="flex-1 min-w-[220px] px-3.5 py-2 border-b-4 border-indigo-500 focus:border-indigo-700 bg-indigo-50/70 focus:bg-white text-indigo-950 font-extrabold text-lg md:text-xl rounded-lg focus:outline-none transition-all shadow-inner" />
+                            </div>
+                        </div>
+                    `;
+
+                    answerArea.innerHTML = `
+                        <p class="text-xs font-semibold text-slate-400 italic">
+                            <i class="fa-solid fa-keyboard mr-1"></i> Type the rest of the sentence directly into the box above and press Enter or click Check.
+                        </p>
+                    `;
+                    setTimeout(() => {
+                        const inputField = document.getElementById('rewrite-input');
+                        if (inputField) inputField.focus();
+                    }, 50);
+                }
+            }
+
+            renderAttemptsDots() {
+                const container = document.getElementById('attempts-dots');
+                let html = '';
+                for (let i = 0; i < 3; i++) {
+                    if (i < this.attemptsLeft) {
+                        html += `<i class="fa-solid fa-circle text-indigo-500 text-xs"></i>`;
+                    } else {
+                        html += `<i class="fa-regular fa-circle text-slate-300 text-xs"></i>`;
+                    }
+                }
+                container.innerHTML = html;
+            }
+
+            selectMCQ(index) {
+                if (this.isAnswered) return;
+                this.selectedMCQOption = index;
+                document.querySelectorAll('.mcq-option').forEach((btn, idx) => {
+                    if (idx === index) {
+                        btn.className = "mcq-option text-left p-4 rounded-xl border-2 border-indigo-600 bg-indigo-50 font-bold text-indigo-900 transition-all shadow-sm";
+                    } else {
+                        btn.className = "mcq-option text-left p-4 rounded-xl border-2 border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/50 font-medium text-slate-700 transition-all";
+                    }
+                });
+            }
+
+            handleMainAction() {
+                // If question is already answered, button acts as "Next Question"
+                if (this.isAnswered) {
+                    this.nextQuestion();
+                    return;
+                }
+
+                // Answer Evaluation logic
+                const currentQ = this.activeQuestions[this.currentQuestionIndex];
+                let isCorrect = false;
+                let userString = "";
+
+                if (this.activePart.type === "mcq") {
+                    if (this.selectedMCQOption === null) {
+                        this.showTempFeedback("Please select an answer first!", "warning");
+                        return;
+                    }
+                    isCorrect = (this.selectedMCQOption === currentQ.correctIndex);
+                } 
+                else if (this.activePart.type === "gap_fill") {
+                    const inputEl = document.getElementById('gap-input');
+                    userString = inputEl ? inputEl.value.trim().toLowerCase() : "";
+                    if (!userString) {
+                        this.showTempFeedback("Please enter your answer!", "warning");
+                        return;
+                    }
+                    isCorrect = currentQ.acceptableAnswers.some(ans => ans.toLowerCase() === userString);
+                } 
+                else if (this.activePart.type === "rewrite") {
+                    const inputEl = document.getElementById('rewrite-input');
+                    userString = inputEl ? inputEl.value.trim() : "";
+                    if (!userString) {
+                        this.showTempFeedback("Please type your sentence!", "warning");
+                        return;
+                    }
+                    // Clean extra spaces & periods for robust checking
+                    const normalize = (str) => str.toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "").replace(/\s+/g, " ").trim();
+                    const cleanUser = normalize(userString);
+
+                    isCorrect = currentQ.acceptableAnswers.some(ans => normalize(ans) === cleanUser);
+                }
+
+                if (isCorrect) {
+                    this.handleCorrectAnswer(currentQ);
+                } else {
+                    this.handleIncorrectAnswer(currentQ);
+                }
+            }
+
+            handleCorrectAnswer(question) {
+                this.isAnswered = true;
+                this.sound.playCorrect();
+
+                // Track stats
+                if (this.attemptsLeft === 3) {
+                    this.stats.firstTryCorrect++;
+                    this.stats.partResults[this.currentPartIndex].correct++;
+                }
+
+                // Random praise text
+                const randomPraise = this.praiseList[Math.floor(Math.random() * this.praiseList.length)];
+
+                // Show feedback
+                const feedbackBanner = document.getElementById('feedback-banner');
+                feedbackBanner.className = "mt-6 p-4 rounded-xl text-emerald-800 bg-emerald-50 border border-emerald-200 animate-pop flex items-center justify-between";
+                
+                feedbackBanner.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-circle-check text-emerald-500 text-2xl"></i>
+                        <div>
+                            <div class="font-extrabold text-base">${randomPraise}</div>
+                            <div class="text-xs text-emerald-600 font-medium">Your answer is correct!</div>
+                        </div>
+                    </div>
+                `;
+
+                // Lock inputs
+                this.disableInputs();
+
+                // TTS audio playback if allowed for this section
+                if (this.activePart.readAudio && question.fullSentence) {
+                    this.tts.speak(question.fullSentence);
+                    const repeatBtn = document.getElementById('btn-audio-repeat');
+                    repeatBtn.classList.remove('hidden');
+                }
+
+                this.setNextButtonState();
+            }
+
+            handleIncorrectAnswer(question) {
+                this.attemptsLeft--;
+                this.renderAttemptsDots();
+                this.sound.playIncorrect();
+
+                const card = document.getElementById('question-card');
+                card.classList.add('animate-shake');
+                setTimeout(() => card.classList.remove('animate-shake'), 400);
+
+                if (this.attemptsLeft > 0) {
+                    // Still have attempts left -> reset input field & encourage retry
+                    this.showTempFeedback(`Incorrect. You have ${this.attemptsLeft} attempt(s) left. Try again!`, "error");
+                    
+                    if (this.activePart.type === "mcq") {
+                        this.selectedMCQOption = null;
+                        document.querySelectorAll('.mcq-option').forEach(btn => {
+                            btn.className = "mcq-option text-left p-4 rounded-xl border-2 border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/50 font-medium text-slate-700 transition-all";
+                        });
+                    } else if (this.activePart.type === "gap_fill") {
+                        const inputEl = document.getElementById('gap-input');
+                        if (inputEl) {
+                            inputEl.value = "";
+                            inputEl.focus();
+                        }
+                    } else if (this.activePart.type === "rewrite") {
+                        const inputEl = document.getElementById('rewrite-input');
+                        if (inputEl) {
+                            inputEl.focus();
+                            inputEl.select();
+                        }
+                    }
+                } else {
+                    // Out of attempts -> Reveal correct answer
+                    this.isAnswered = true;
+                    this.disableInputs();
+
+                    let correctStr = "";
+                    if (this.activePart.type === "mcq") {
+                        correctStr = question.options[question.correctIndex];
+                    } else if (this.activePart.type === "gap_fill") {
+                        correctStr = question.acceptableAnswers[0];
+                    } else if (this.activePart.type === "rewrite") {
+                        correctStr = `${question.prefix}${question.acceptableAnswers[0]}`;
+                    }
+
+                    const feedbackBanner = document.getElementById('feedback-banner');
+                    feedbackBanner.className = "mt-6 p-4 rounded-xl text-rose-800 bg-rose-50 border border-rose-200 animate-pop";
+                    feedbackBanner.innerHTML = `
+                        <div class="flex items-start gap-3">
+                            <i class="fa-solid fa-circle-xmark text-rose-500 text-2xl mt-0.5"></i>
+                            <div>
+                                <div class="font-bold text-base">Out of attempts!</div>
+                                <div class="text-sm mt-1">Correct Answer: <span class="font-extrabold text-rose-950">${correctStr}</span></div>
+                            </div>
+                        </div>
+                    `;
+
+                    this.setNextButtonState();
+                }
+            }
+
+            disableInputs() {
+                document.querySelectorAll('.mcq-option').forEach(btn => btn.disabled = true);
+                const gapInp = document.getElementById('gap-input');
+                if (gapInp) gapInp.disabled = true;
+                const rewInp = document.getElementById('rewrite-input');
+                if (rewInp) rewInp.disabled = true;
+            }
+
+            setNextButtonState() {
+                const actionBtn = document.getElementById('btn-action');
+                actionBtn.innerHTML = `<span>Next Question</span> <i class="fa-solid fa-arrow-right"></i>`;
+                actionBtn.className = "px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-base rounded-xl shadow-md shadow-emerald-500/20 transition-all flex items-center gap-2 animate-bounce";
+            }
+
+            showTempFeedback(msg, type) {
+                const feedbackBanner = document.getElementById('feedback-banner');
+                let colorClasses = "bg-amber-50 text-amber-800 border-amber-200";
+                let icon = "fa-triangle-exclamation";
+
+                if (type === "error") {
+                    colorClasses = "bg-rose-50 text-rose-800 border-rose-200";
+                    icon = "fa-circle-xmark";
+                }
+
+                feedbackBanner.className = `mt-6 p-4 rounded-xl border animate-pop flex items-center gap-3 ${colorClasses}`;
+                feedbackBanner.innerHTML = `<i class="fa-solid ${icon} text-lg"></i> <span class="font-semibold text-sm">${msg}</span>`;
+            }
+
+            repeatTTS() {
+                const currentQ = this.activeQuestions[this.currentQuestionIndex];
+                if (currentQ.fullSentence) {
+                    this.tts.speak(currentQ.fullSentence);
+                }
+            }
+
+            nextQuestion() {
+                this.currentQuestionIndex++;
+                if (this.currentQuestionIndex < this.activeQuestions.length) {
+                    this.loadQuestion();
+                } else {
+                    // Part Finished -> Go to next part or Summary
+                    this.currentPartIndex++;
+                    if (this.currentPartIndex < this.preparedData.length) {
+                        this.loadPart();
+                    } else {
+                        this.showSummary();
+                    }
+                }
+            }
+
+            calcGlobalQuestionIndex() {
+                let total = 0;
+                for (let i = 0; i < this.currentPartIndex; i++) {
+                    total += this.preparedData[i].questions.length;
+                }
+                return total + this.currentQuestionIndex;
+            }
+
+            showSummary() {
+                document.getElementById('app-header').classList.add('hidden');
+                document.getElementById('screen-quiz').classList.add('hidden');
+                document.getElementById('screen-summary').classList.remove('hidden');
+
+                const totalQ = this.stats.totalQuestions;
+                const correctCount = this.stats.firstTryCorrect;
+                const pct = Math.round((correctCount / totalQ) * 100);
+
+                document.getElementById('summary-score-pct').innerText = `${pct}%`;
+                document.getElementById('summary-score-count').innerText = `${correctCount} / ${totalQ}`;
+
+                const breakdownContainer = document.getElementById('summary-breakdown');
+                breakdownContainer.innerHTML = this.stats.partResults.map((res, idx) => `
+                    <div class="flex justify-between items-center py-1 border-b border-slate-200/50 last:border-0">
+                        <span class="font-medium text-slate-700">Part ${idx + 1}: ${res.title}</span>
+                        <span class="font-bold text-slate-900">${res.correct} / ${res.total}</span>
+                    </div>
+                `).join('');
+            }
+
+            restartQuiz() {
+                document.getElementById('screen-summary').classList.add('hidden');
+                this.startQuiz();
+            }
+        }
+
+        // Initialize quiz instance globally immediately to avoid race conditions with window.onload
+        let quizApp;
+        const initQuizApp = () => {
+            if (!quizApp) {
+                quizApp = new QuizApp();
+                window.quizApp = quizApp;
+            }
+        };
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initQuizApp);
+        } else {
+            initQuizApp();
+        }
+    </script>
+</body>
+</html>
