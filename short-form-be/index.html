@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Grammar Practice - Short Forms ('m, 's, 're)</title>
+    <!-- Tailwind CSS for modern responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                        }
+                    },
+                    keyframes: {
+                        bounceShort: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-8px)' }
+                        },
+                        popIn: {
+                            '0%': { opacity: '0', transform: 'scale(0.9) translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'scale(1) translateY(0)' }
+                        },
+                        shake: {
+                            '0%, 100%': { transform: 'translateX(0)' },
+                            '20%, 60%': { transform: 'translateX(-6px)' },
+                            '40%, 80%': { transform: 'translateX(6px)' }
+                        }
+                    },
+                    animation: {
+                        'bounce-short': 'bounceShort 0.5s ease-in-out',
+                        'pop-in': 'popIn 0.3s ease-out forwards',
+                        'shake': 'shake 0.4s ease-in-out'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .option-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .option-card:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+        .confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800 flex flex-col justify-between antialiased selection:bg-sky-200">
+
+    <!-- Header Navigation -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-sky-600 text-white flex items-center justify-center font-bold text-xl shadow-md shadow-sky-200">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-slate-800 text-base md:text-lg leading-tight">Grammar Practice</h1>
+                    <p class="text-xs text-slate-500 font-medium">Verb "To Be" Short Forms ('m, 's, 're)</p>
+                </div>
+            </div>
+            
+            <!-- Quick Info Badge -->
+            <div id="part-badge" class="px-3 py-1.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300 flex items-center gap-1.5">
+                <i class="fa-solid fa-book-open"></i>
+                <span>Part 1: Guided Practice</span>
+            </div>
+        </div>
+    </header>
+
+    <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
+
+    <!-- Main Content Container -->
+    <main class="max-w-4xl mx-auto px-4 py-6 w-full flex-grow flex flex-col justify-center">
+
+        <!-- START / WELCOME SCREEN -->
+        <div id="start-screen" class="bg-white rounded-3xl p-6 md:p-10 shadow-xl border border-slate-200 text-center space-y-6 max-w-2xl mx-auto animate-pop-in">
+            <div class="w-20 h-20 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center mx-auto text-3xl shadow-inner">
+                <i class="fa-solid fa-spell-check"></i>
+            </div>
+            <div>
+                <span class="inline-block px-3 py-1 bg-sky-100 text-sky-700 text-xs font-semibold rounded-full uppercase tracking-wider mb-2">Interactive Quiz</span>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-slate-800">Master Verb "To Be" Short Forms</h2>
+                <p class="text-slate-600 text-sm md:text-base mt-2">
+                    Test your knowledge on contractions <span class="font-semibold text-sky-600 font-mono">'m</span>, <span class="font-semibold text-sky-600 font-mono">'s</span>, and <span class="font-semibold text-sky-600 font-mono">'re</span> across 15 randomized questions!
+                </p>
+            </div>
+
+            <!-- Quiz Structure Info Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left text-sm">
+                <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex items-start space-x-3">
+                    <div class="p-2 bg-amber-100 text-amber-700 rounded-lg shrink-0 mt-0.5">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800">Part 1 (Questions 1-7)</h3>
+                        <p class="text-slate-500 text-xs mt-0.5">Includes an on-screen reference grammar table to guide you.</p>
+                    </div>
+                </div>
+                <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex items-start space-x-3">
+                    <div class="p-2 bg-emerald-100 text-emerald-700 rounded-lg shrink-0 mt-0.5">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800">Part 2 (Questions 8-15)</h3>
+                        <p class="text-slate-500 text-xs mt-0.5">No guide available! Test your memory and speed.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accessibility / Device Hint -->
+            <div class="text-xs text-slate-400 bg-slate-50 py-2.5 px-4 rounded-xl border border-slate-100 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-keyboard text-slate-500"></i>
+                <span>Tip: Click or tap options, or press <kbd class="px-1.5 py-0.5 bg-white border border-slate-300 rounded font-mono text-[10px] text-slate-600 shadow-sm">1</kbd>, <kbd class="px-1.5 py-0.5 bg-white border border-slate-300 rounded font-mono text-[10px] text-slate-600 shadow-sm">2</kbd>, <kbd class="px-1.5 py-0.5 bg-white border border-slate-300 rounded font-mono text-[10px] text-slate-600 shadow-sm">3</kbd> and press <kbd class="px-1.5 py-0.5 bg-white border border-slate-300 rounded font-mono text-[10px] text-slate-600 shadow-sm">Enter</kbd> to submit!</span>
+            </div>
+
+            <button id="btn-start" class="w-full py-4 px-8 bg-sky-600 hover:bg-sky-700 active:bg-sky-800 text-white font-bold rounded-2xl text-lg shadow-lg shadow-sky-500/30 transition-all flex items-center justify-center gap-2 group cursor-pointer">
+                <span>Start Exercise</span>
+                <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+            </button>
+        </div>
+
+        <!-- ACTIVE QUIZ SCREEN -->
+        <div id="quiz-screen" class="hidden space-y-6">
+
+            <!-- Progress Bar Card -->
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
+                <div class="flex items-center justify-between text-xs md:text-sm font-semibold text-slate-600 mb-2">
+                    <span id="question-tracker">Question 1 of 15</span>
+                    <span id="score-tracker" class="text-sky-600 font-bold">Score: 0 / 15</span>
+                </div>
+                <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden p-0.5 border border-slate-200/80">
+                    <div id="progress-bar" class="bg-sky-500 h-full rounded-full transition-all duration-300 w-0"></div>
+                </div>
+            </div>
+
+            <!-- Grammar Guide Table (Visible in Part 1 only) -->
+            <div id="grammar-guide" class="bg-amber-50/90 border border-amber-200 rounded-2xl p-4 md:p-5 shadow-sm transition-all">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="p-1.5 bg-amber-200 text-amber-800 rounded-lg text-xs font-bold">
+                            <i class="fa-solid fa-lightbulb"></i>
+                        </span>
+                        <h3 class="font-bold text-amber-900 text-sm md:text-base">Grammar Guide: Full Form vs. Short Form</h3>
+                    </div>
+                    <span class="text-xs text-amber-700 font-medium bg-amber-100/80 px-2.5 py-1 rounded-md">Part 1 Helper</span>
+                </div>
+                
+                <!-- Grammar Table based on reference image -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs md:text-sm text-left border-collapse rounded-xl overflow-hidden shadow-sm">
+                        <thead>
+                            <tr class="bg-slate-900 text-white">
+                                <th class="py-2.5 px-4 font-semibold w-1/2 border-r border-slate-700 text-center">Full Form (Đầy đủ)</th>
+                                <th class="py-2.5 px-4 font-semibold w-1/2 text-center">Short Form (Viết tắt)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-amber-200/60 bg-white/80">
+                            <tr class="hover:bg-amber-100/40">
+                                <td class="py-1.5 px-4 text-center font-medium text-slate-700">I am</td>
+                                <td class="py-1.5 px-4 text-center font-bold text-sky-700">I'm</td>
+                            </tr>
+                            <tr class="hover:bg-amber-100/40">
+                                <td class="py-1.5 px-4 text-center font-medium text-slate-700">He is</td>
+                                <td class="py-1.5 px-4 text-center font-bold text-sky-700">He's</td>
+                            </tr>
+                            <tr class="hover:bg-amber-100/40">
+                                <td class="py-1.5 px-4 text-center font-medium text-slate-700">She is</td>
+                                <td class="py-1.5 px-4 text-center font-bold text-sky-700">She's</td>
+                            </tr>
+                            <tr class="hover:bg-amber-100/40">
+                                <td class="py-1.5 px-4 text-center font-medium text-slate-700">It is</td>
+                                <td class="py-1.5 px-4 text-center font-bold text-sky-700">It's</td>
+                            </tr>
+                            <tr class="hover:bg-amber-100/40">
+                                <td class="py-1.5 px-4 text-center font-medium text-slate-700">You are</td>
+                                <td class="py-1.5 px-4 text-center font-bold text-sky-700">You're</td>
+                            </tr>
+                            <tr class="hover:bg-amber-100/40">
+                                <td class="py-1.5 px-4 text-center font-medium text-slate-700">We are</td>
+                                <td class="py-1.5 px-4 text-center font-bold text-sky-700">We're</td>
+                            </tr>
+                            <tr class="hover:bg-amber-100/40">
+                                <td class="py-1.5 px-4 text-center font-medium text-slate-700">They are</td>
+                                <td class="py-1.5 px-4 text-center font-bold text-sky-700">They're</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Transition Toast Notification for Part 2 -->
+            <div id="part2-banner" class="hidden bg-emerald-500 text-white p-4 rounded-2xl shadow-lg flex items-center space-x-3 animate-pop-in">
+                <div class="text-2xl"><i class="fa-solid fa-trophy"></i></div>
+                <div>
+                    <h4 class="font-bold">Part 2 Unlocked!</h4>
+                    <p class="text-xs text-emerald-100">Grammar guide hidden. Test your memory for the remaining questions!</p>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-lg border border-slate-200 relative overflow-hidden" id="card-question">
+                
+                <!-- Top Question Status Banner -->
+                <div class="flex items-center justify-between mb-6">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-question"></i> Select the correct option
+                    </span>
+                    <span id="attempt-badge" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">
+                        Attempt 1 of 2
+                    </span>
+                </div>
+
+                <!-- Sentence Display -->
+                <div class="py-6 px-4 bg-slate-50 border border-slate-200/80 rounded-2xl text-center mb-6">
+                    <p id="question-text" class="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-wide leading-relaxed">
+                        Sentence goes here...
+                    </p>
+                </div>
+
+                <!-- MCQ Options Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6" id="options-container">
+                    <!-- Option buttons will be dynamically rendered here -->
+                </div>
+
+                <!-- Feedback & Action Footer -->
+                <div id="feedback-area" class="hidden rounded-2xl p-4 md:p-5 transition-all">
+                    <!-- Dynamic Feedback Message -->
+                    <div id="feedback-content" class="flex items-start gap-3">
+                        <div id="feedback-icon" class="text-2xl shrink-0 mt-0.5"></div>
+                        <div class="flex-grow">
+                            <h4 id="feedback-title" class="font-bold text-base">Feedback Title</h4>
+                            <p id="feedback-desc" class="text-sm mt-0.5 leading-relaxed">Explanation or praise goes here...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls Bar -->
+                <div class="mt-6 flex items-center justify-between gap-3 pt-4 border-t border-slate-100">
+                    <div class="text-xs text-slate-400 font-medium hidden sm:flex items-center gap-1">
+                        <span>Press</span>
+                        <kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded font-mono text-[10px] text-slate-600">Enter</kbd>
+                        <span id="enter-key-label">to check answer</span>
+                    </div>
+
+                    <div class="flex items-center gap-3 ml-auto">
+                        <button id="btn-check" class="py-3 px-6 bg-sky-600 hover:bg-sky-700 active:bg-sky-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl text-sm shadow-md transition-all flex items-center gap-2 cursor-pointer">
+                            <span>Check Answer</span>
+                            <i class="fa-solid fa-check"></i>
+                        </button>
+                        <button id="btn-next" class="hidden py-3 px-6 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold rounded-xl text-sm shadow-md shadow-emerald-500/20 transition-all flex items-center gap-2 cursor-pointer animate-bounce-short">
+                            <span>Next Question</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- FINAL RESULTS SCREEN -->
+        <div id="results-screen" class="hidden bg-white rounded-3xl p-6 md:p-10 shadow-xl border border-slate-200 text-center space-y-6 max-w-2xl mx-auto animate-pop-in">
+            <div id="result-icon-container" class="w-24 h-24 rounded-full flex items-center justify-center mx-auto text-4xl shadow-inner bg-amber-100 text-amber-600">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+
+            <div>
+                <span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full uppercase tracking-wider mb-2">Quiz Completed</span>
+                <h2 id="result-title" class="text-2xl md:text-3xl font-extrabold text-slate-800">Great Job!</h2>
+                <p id="result-subtitle" class="text-slate-600 text-sm md:text-base mt-1">Here is a summary of your grammar exercise performance.</p>
+            </div>
+
+            <!-- Detailed Score Stats Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
+                <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl">
+                    <div class="text-xs text-slate-500 font-semibold mb-1">Total Questions</div>
+                    <div id="stat-total" class="text-2xl font-black text-slate-800">15</div>
+                </div>
+                <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl">
+                    <div class="text-xs text-emerald-700 font-semibold mb-1">First Try Correct</div>
+                    <div id="stat-first-try" class="text-2xl font-black text-emerald-600">0</div>
+                </div>
+                <div class="p-3 bg-amber-50 border border-amber-200 rounded-2xl">
+                    <div class="text-xs text-amber-700 font-semibold mb-1">2nd Try Correct</div>
+                    <div id="stat-second-try" class="text-2xl font-black text-amber-600">0</div>
+                </div>
+                <div class="p-3 bg-rose-50 border border-rose-200 rounded-2xl">
+                    <div class="text-xs text-rose-700 font-semibold mb-1">Incorrect</div>
+                    <div id="stat-wrong" class="text-2xl font-black text-rose-600">0</div>
+                </div>
+            </div>
+
+            <!-- Accuracy Percentage Bar -->
+            <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl text-left space-y-2">
+                <div class="flex justify-between items-center text-sm font-bold">
+                    <span class="text-slate-700">Accuracy Score</span>
+                    <span id="stat-percentage" class="text-sky-600">0%</span>
+                </div>
+                <div class="w-full bg-slate-200 h-3 rounded-full overflow-hidden">
+                    <div id="stat-progress-bar" class="bg-sky-500 h-full rounded-full transition-all duration-500 w-0"></div>
+                </div>
+            </div>
+
+            <button id="btn-restart" class="w-full py-4 px-8 bg-sky-600 hover:bg-sky-700 active:bg-sky-800 text-white font-bold rounded-2xl text-lg shadow-lg shadow-sky-500/30 transition-all flex items-center justify-center gap-2 group cursor-pointer">
+                <i class="fa-solid fa-rotate-right group-hover:rotate-180 transition-transform duration-500"></i>
+                <span>Try Again (New Random Order)</span>
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400">
+        <div class="max-w-4xl mx-auto px-4">
+            English Grammar Practice • Verb "To Be" Short Forms • Ready for GitHub Pages
+        </div>
+    </footer>
+
+    <script>
+        /* --------------------------------------------------
+           QUESTION BANK DATA (15 Items)
+           -------------------------------------------------- */
+        const MASTER_QUESTIONS = [
+            {
+                id: 1,
+                sentence: "I ___ 10 years old.",
+                options: ["'m", "'s", "'re"],
+                answer: "'m",
+                explanation: "Chủ ngữ là 'I', nên dùng ''m' (am)."
+            },
+            {
+                id: 2,
+                sentence: "She ___ my sister.",
+                options: ["'m", "'s", "'re"],
+                answer: "'s",
+                explanation: "Chủ ngữ là 'She' (ngôi thứ 3 số ít), nên dùng ''s' (is)."
+            },
+            {
+                id: 3,
+                sentence: "They ___ happy.",
+                options: ["'m", "'s", "'re"],
+                answer: "'re",
+                explanation: "Chủ ngữ là 'They' (số nhiều), nên dùng ''re' (are)."
+            },
+            {
+                id: 4,
+                sentence: "Alex ___ a small boy.",
+                options: ["'m", "'s", "'re"],
+                answer: "'s",
+                explanation: "'Alex' là danh từ riêng số ít (tương đương 'He'), nên dùng ''s' (is)."
+            },
+            {
+                id: 5,
+                sentence: "We ___ friends.",
+                options: ["'m", "'s", "'re"],
+                answer: "'re",
+                explanation: "Chủ ngữ là 'We' (số nhiều), nên dùng ''re' (are)."
+            },
+            {
+                id: 6,
+                sentence: "You ___ very kind.",
+                options: ["'m", "'s", "'re"],
+                answer: "'re",
+                explanation: "Chủ ngữ là 'You', nên đi với ''re' (are)."
+            },
+            {
+                id: 7,
+                sentence: "It ___ a big dog.",
+                options: ["'m", "'s", "'re"],
+                answer: "'s",
+                explanation: "Chủ ngữ là 'It' (ngôi thứ 3 số ít), nên dùng ''s' (is)."
+            },
+            {
+                id: 8,
+                sentence: "I ___ from Vietnam.",
+                options: ["'m", "'s", "'re"],
+                answer: "'m",
+                explanation: "Chủ ngữ là 'I', nên dùng ''m' (am)."
+            },
+            {
+                id: 9,
+                sentence: "Tom ___ at school.",
+                options: ["'m", "'s", "'re"],
+                answer: "'s",
+                explanation: "'Tom' là tên riêng số ít (tương đương 'He'), nên dùng ''s' (is)."
+            },
+            {
+                id: 10,
+                sentence: "My mom and dad ___ at home.",
+                options: ["'m", "'s", "'re"],
+                answer: "'re",
+                explanation: "'My mom and dad' là 2 người (chủ ngữ số nhiều - 'They'), nên dùng ''re' (are)."
+            },
+            {
+                id: 11,
+                sentence: "The cat ___ on the table.",
+                options: ["'m", "'s", "'re"],
+                answer: "'s",
+                explanation: "'The cat' là danh từ số ít (tương đương 'It'), nên dùng ''s' (is)."
+            },
+            {
+                id: 12,
+                sentence: "We ___ from Brazil!",
+                options: ["'m", "'s", "'re"],
+                answer: "'re",
+                explanation: "Chủ ngữ là 'We' (số nhiều), nên dùng ''re' (are)."
+            },
+            {
+                id: 13,
+                sentence: "Anna and Ben ___ from Spain.",
+                options: ["'m", "'s", "'re"],
+                answer: "'re",
+                explanation: "'Anna and Ben' là chủ ngữ số nhiều (tương đương 'They'), nên dùng ''re' (are)."
+            },
+            {
+                id: 14,
+                sentence: "I ___ hungry.",
+                options: ["'m", "'s", "'re"],
+                answer: "'m",
+                explanation: "Chủ ngữ là 'I', nên dùng ''m' (am)."
+            },
+            {
+                id: 15,
+                sentence: "It ___ my new hat.",
+                options: ["'m", "'s", "'re"],
+                answer: "'s",
+                explanation: "Chủ ngữ là 'It' (số ít), nên dùng ''s' (is)."
+            }
+        ];
+
+        /* Praise Words Array */
+        const PRAISE_WORDS = ["Well done!", "Good job!", "Excellent!", "Very good!"];
+
+        /* Audio Synthesizer (Web Audio API - No external files needed) */
+        class SoundFX {
+            constructor() {
+                this.ctx = null;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    if (AudioContext) {
+                        this.ctx = new AudioContext();
+                    }
+                }
+                if (this.ctx && this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+
+            playCorrect() {
+                this.init();
+                if (!this.ctx) return;
+                
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'triangle';
+                
+                // Arpeggio sound: C5 -> E5 -> G5 -> C6
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
+                osc.frequency.setValueAtTime(783.99, now + 0.16); // G5
+                osc.frequency.setValueAtTime(1046.50, now + 0.24); // C6
+
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.5);
+
+                // Browser Speech Synthesis praise
+                this.speakPraise();
+            }
+
+            playWrong() {
+                this.init();
+                if (!this.ctx) return;
+
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'sawtooth';
+                
+                // Low pitch buzzer effect
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.linearRampToValueAtTime(110, now + 0.3);
+
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.3);
+            }
+
+            speakPraise() {
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel(); // Stop ongoing speech
+                    const praiseText = PRAISE_WORDS[Math.floor(Math.random() * PRAISE_WORDS.length)];
+                    const utterance = new SpeechSynthesisUtterance(praiseText);
+                    utterance.lang = 'en-US';
+                    utterance.rate = 1.0;
+                    utterance.pitch = 1.2;
+                    window.speechSynthesis.speak(utterance);
+                }
+            }
+        }
+
+        const soundFX = new SoundFX();
+
+        /* Confetti Effect for Correct Answers */
+        function triggerConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const colors = ['#0284c7', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'];
+
+            for (let i = 0; i < 40; i++) {
+                particles.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    vx: (Math.random() - 0.5) * 12,
+                    vy: (Math.random() - 0.8) * 12,
+                    size: Math.random() * 8 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    alpha: 1,
+                    decay: Math.random() * 0.02 + 0.015
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let active = false;
+
+                particles.forEach(p => {
+                    if (p.alpha > 0) {
+                        active = true;
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.vy += 0.3; // gravity
+                        p.alpha -= p.decay;
+
+                        ctx.save();
+                        ctx.globalAlpha = Math.max(0, p.alpha);
+                        ctx.fillStyle = p.color;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.restore();
+                    }
+                });
+
+                if (active) {
+                    requestAnimationFrame(animate);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+
+            animate();
+        }
+
+        /* --------------------------------------------------
+           QUIZ STATE VARIABLES
+           -------------------------------------------------- */
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let selectedOption = null;
+        let currentAttempts = 0;
+        let isQuestionAnswered = false;
+
+        // Statistics
+        let stats = {
+            firstTryCorrect: 0,
+            secondTryCorrect: 0,
+            failedCount: 0
+        };
+
+        /* Fisher-Yates Array Shuffle */
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        /* DOM Elements */
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultsScreen = document.getElementById('results-screen');
+
+        const btnStart = document.getElementById('btn-start');
+        const btnCheck = document.getElementById('btn-check');
+        const btnNext = document.getElementById('btn-next');
+        const btnRestart = document.getElementById('btn-restart');
+
+        const grammarGuide = document.getElementById('grammar-guide');
+        const partBadge = document.getElementById('part-badge');
+        const part2Banner = document.getElementById('part2-banner');
+
+        const questionTracker = document.getElementById('question-tracker');
+        const scoreTracker = document.getElementById('score-tracker');
+        const progressBar = document.getElementById('progress-bar');
+        const attemptBadge = document.getElementById('attempt-badge');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+
+        const feedbackArea = document.getElementById('feedback-area');
+        const feedbackIcon = document.getElementById('feedback-icon');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackDesc = document.getElementById('feedback-desc');
+        const enterKeyLabel = document.getElementById('enter-key-label');
+
+        /* Initialize Quiz */
+        function startQuiz() {
+            // Shuffle questions fresh every time
+            currentQuestions = shuffleArray(MASTER_QUESTIONS);
+            currentIndex = 0;
+            stats = {
+                firstTryCorrect: 0,
+                secondTryCorrect: 0,
+                failedCount: 0
+            };
+
+            startScreen.classList.add('hidden');
+            resultsScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+
+            loadQuestion();
+        }
+
+        /* Load Question into UI */
+        function loadQuestion() {
+            isQuestionAnswered = false;
+            selectedOption = null;
+            currentAttempts = 0;
+
+            const q = currentQuestions[currentIndex];
+
+            // Part 1 vs Part 2 UI setup
+            const isPart1 = currentIndex < 7; // First 7 questions (indices 0 to 6)
+            
+            if (isPart1) {
+                grammarGuide.classList.remove('hidden');
+                partBadge.className = "px-3 py-1.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300 flex items-center gap-1.5";
+                partBadge.innerHTML = `<i class="fa-solid fa-book-open"></i><span>Part 1: Guided Practice</span>`;
+                part2Banner.classList.add('hidden');
+            } else {
+                grammarGuide.classList.add('hidden');
+                partBadge.className = "px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1.5";
+                partBadge.innerHTML = `<i class="fa-solid fa-brain"></i><span>Part 2: Challenge Mode</span>`;
+                
+                // Show banner when entering Part 2 for first time
+                if (currentIndex === 7) {
+                    part2Banner.classList.remove('hidden');
+                } else {
+                    part2Banner.classList.add('hidden');
+                }
+            }
+
+            // Update Progress Header
+            questionTracker.textContent = `Question ${currentIndex + 1} of ${currentQuestions.length}`;
+            const totalScore = stats.firstTryCorrect + stats.secondTryCorrect;
+            scoreTracker.textContent = `Score: ${totalScore} / ${currentQuestions.length}`;
+            const progressPercent = ((currentIndex) / currentQuestions.length) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+
+            // Reset Attempt Badge
+            updateAttemptBadge();
+
+            // Display Question Sentence
+            questionText.innerHTML = q.sentence.replace('___', `<span id="gap-filler" class="inline-block border-b-4 border-sky-500 text-sky-600 px-3 py-0.5 mx-1 min-w-[70px] bg-sky-50 rounded-lg">???</span>`);
+
+            // Render Options
+            optionsContainer.innerHTML = '';
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `option-card p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-sky-300 flex items-center justify-between font-bold text-lg text-slate-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-sky-500`;
+                btn.dataset.option = opt;
+                btn.dataset.index = idx;
+
+                const labelLetter = String.fromCharCode(65 + idx); // A, B, C
+
+                btn.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="w-8 h-8 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center text-sm font-extrabold border border-slate-200">${labelLetter}</span>
+                        <span class="text-xl font-mono">${opt}</span>
+                    </div>
+                    <div class="indicator-icon text-slate-300"><i class="fa-regular fa-circle"></i></div>
+                `;
+
+                btn.addEventListener('click', () => selectOption(opt, btn));
+                optionsContainer.appendChild(btn);
+            });
+
+            // Reset Buttons & Feedback Area
+            feedbackArea.className = 'hidden rounded-2xl p-4 md:p-5 transition-all';
+            btnCheck.disabled = true;
+            btnCheck.classList.remove('hidden');
+            btnNext.classList.add('hidden');
+            enterKeyLabel.textContent = 'to check answer';
+        }
+
+        /* Update Attempt Badge */
+        function updateAttemptBadge() {
+            if (currentAttempts === 0) {
+                attemptBadge.className = 'text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600';
+                attemptBadge.textContent = 'Attempt 1 of 2';
+            } else if (currentAttempts === 1) {
+                attemptBadge.className = 'text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-100 text-amber-700 animate-pulse';
+                attemptBadge.textContent = 'Attempt 2 of 2 (Final Try)';
+            }
+        }
+
+        /* Select an Option */
+        function selectOption(opt, element) {
+            if (isQuestionAnswered) return;
+
+            selectedOption = opt;
+            soundFX.init(); // Initialize audio context on click
+
+            // Highlight selected button
+            const allButtons = optionsContainer.querySelectorAll('button');
+            allButtons.forEach(btn => {
+                btn.classList.remove('border-sky-500', 'bg-sky-50', 'text-sky-700', 'ring-2', 'ring-sky-200');
+                btn.classList.add('border-slate-200', 'bg-white', 'text-slate-700');
+                const icon = btn.querySelector('.indicator-icon');
+                if (icon) icon.innerHTML = '<i class="fa-regular fa-circle"></i>';
+            });
+
+            element.classList.remove('border-slate-200', 'bg-white', 'text-slate-700');
+            element.classList.add('border-sky-500', 'bg-sky-50', 'text-sky-700', 'ring-2', 'ring-sky-200');
+            
+            const icon = element.querySelector('.indicator-icon');
+            if (icon) icon.innerHTML = '<i class="fa-solid fa-circle-dot text-sky-600"></i>';
+
+            // Fill gap visual preview
+            const gapFiller = document.getElementById('gap-filler');
+            if (gapFiller) {
+                gapFiller.textContent = opt;
+            }
+
+            btnCheck.disabled = false;
+        }
+
+        /* Check Answer Logic */
+        function checkAnswer() {
+            if (!selectedOption || isQuestionAnswered) return;
+
+            const q = currentQuestions[currentIndex];
+            const gapFiller = document.getElementById('gap-filler');
+
+            if (selectedOption === q.answer) {
+                // Correct Answer!
+                isQuestionAnswered = true;
+                soundFX.playCorrect();
+                triggerConfetti();
+
+                // Track Score
+                if (currentAttempts === 0) {
+                    stats.firstTryCorrect++;
+                } else {
+                    stats.secondTryCorrect++;
+                }
+
+                // Praise word selection
+                const praise = PRAISE_WORDS[Math.floor(Math.random() * PRAISE_WORDS.length)];
+
+                // Update Feedback Display
+                feedbackArea.className = 'block bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-2xl p-4 md:p-5 transition-all animate-pop-in';
+                feedbackIcon.className = 'text-2xl text-emerald-600 shrink-0 mt-0.5';
+                feedbackIcon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+                feedbackTitle.textContent = praise;
+                feedbackTitle.className = 'font-bold text-emerald-800 text-base md:text-lg';
+                feedbackDesc.textContent = `Chính xác! ${q.explanation}`;
+
+                if (gapFiller) {
+                    gapFiller.className = 'inline-block border-b-4 border-emerald-500 text-emerald-600 font-bold px-3 py-0.5 mx-1 bg-emerald-50 rounded-lg';
+                }
+
+                // Disable options
+                disableOptions();
+
+                // Toggle Buttons
+                btnCheck.classList.add('hidden');
+                btnNext.classList.remove('hidden');
+                enterKeyLabel.textContent = 'for next question';
+
+            } else {
+                // Incorrect Answer!
+                currentAttempts++;
+                soundFX.playWrong();
+
+                if (currentAttempts < 2) {
+                    // First Wrong Attempt: Allow retry
+                    updateAttemptBadge();
+
+                    feedbackArea.className = 'block bg-amber-50 border border-amber-200 text-amber-900 rounded-2xl p-4 md:p-5 transition-all animate-shake';
+                    feedbackIcon.className = 'text-2xl text-amber-600 shrink-0 mt-0.5';
+                    feedbackIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+                    feedbackTitle.textContent = 'Chưa chính xác!';
+                    feedbackTitle.className = 'font-bold text-amber-800 text-base';
+                    feedbackDesc.textContent = 'Hãy thử lại một lần nữa nhé! Đọc kỹ câu hỏi và chọn lại đáp án đúng.';
+
+                    // Reset selected state to force student to choose again
+                    selectedOption = null;
+                    btnCheck.disabled = true;
+
+                    if (gapFiller) {
+                        gapFiller.textContent = '???';
+                        gapFiller.className = 'inline-block border-b-4 border-amber-400 text-amber-600 px-3 py-0.5 mx-1 min-w-[70px] bg-amber-50 rounded-lg';
+                    }
+
+                    const allButtons = optionsContainer.querySelectorAll('button');
+                    allButtons.forEach(btn => {
+                        btn.classList.remove('border-sky-500', 'bg-sky-50', 'text-sky-700', 'ring-2', 'ring-sky-200');
+                        btn.classList.add('border-slate-200', 'bg-white', 'text-slate-700');
+                        const icon = btn.querySelector('.indicator-icon');
+                        if (icon) icon.innerHTML = '<i class="fa-regular fa-circle"></i>';
+                    });
+
+                } else {
+                    // Second Wrong Attempt: Reveal Answer & Explanation
+                    isQuestionAnswered = true;
+                    stats.failedCount++;
+                    updateAttemptBadge();
+
+                    feedbackArea.className = 'block bg-rose-50 border border-rose-200 text-rose-900 rounded-2xl p-4 md:p-5 transition-all animate-pop-in';
+                    feedbackIcon.className = 'text-2xl text-rose-600 shrink-0 mt-0.5';
+                    feedbackIcon.innerHTML = '<i class="fa-solid fa-circle-xmark"></i>';
+                    feedbackTitle.textContent = `Chưa đúng! Đáp án đúng là "${q.answer}"`;
+                    feedbackTitle.className = 'font-bold text-rose-800 text-base md:text-lg';
+                    feedbackDesc.textContent = `Giải thích: ${q.explanation}`;
+
+                    if (gapFiller) {
+                        gapFiller.textContent = q.answer;
+                        gapFiller.className = 'inline-block border-b-4 border-rose-500 text-rose-600 font-bold px-3 py-0.5 mx-1 bg-rose-50 rounded-lg';
+                    }
+
+                    disableOptions();
+
+                    // Highlight true answer in options list
+                    const allButtons = optionsContainer.querySelectorAll('button');
+                    allButtons.forEach(btn => {
+                        if (btn.dataset.option === q.answer) {
+                            btn.classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-700');
+                        }
+                    });
+
+                    // Toggle Buttons
+                    btnCheck.classList.add('hidden');
+                    btnNext.classList.remove('hidden');
+                    enterKeyLabel.textContent = 'for next question';
+                }
+            }
+
+            // Update live score display
+            const totalScore = stats.firstTryCorrect + stats.secondTryCorrect;
+            scoreTracker.textContent = `Score: ${totalScore} / ${currentQuestions.length}`;
+        }
+
+        /* Disable all option buttons */
+        function disableOptions() {
+            const allButtons = optionsContainer.querySelectorAll('button');
+            allButtons.forEach(btn => {
+                btn.disabled = true;
+                btn.classList.add('cursor-not-allowed', 'opacity-80');
+            });
+        }
+
+        /* Next Question / Finish Quiz */
+        function nextQuestion() {
+            currentIndex++;
+            if (currentIndex < currentQuestions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        /* Show Results Screen */
+        function showResults() {
+            quizScreen.classList.add('hidden');
+            resultsScreen.classList.remove('hidden');
+
+            const total = currentQuestions.length;
+            const totalCorrect = stats.firstTryCorrect + stats.secondTryCorrect;
+            const percentage = Math.round((totalCorrect / total) * 100);
+
+            document.getElementById('stat-total').textContent = total;
+            document.getElementById('stat-first-try').textContent = stats.firstTryCorrect;
+            document.getElementById('stat-second-try').textContent = stats.secondTryCorrect;
+            document.getElementById('stat-wrong').textContent = stats.failedCount;
+
+            document.getElementById('stat-percentage').textContent = `${percentage}%`;
+            document.getElementById('stat-progress-bar').style.width = `${percentage}%`;
+
+            const iconContainer = document.getElementById('result-icon-container');
+            const resultTitle = document.getElementById('result-title');
+            const resultSubtitle = document.getElementById('result-subtitle');
+
+            if (percentage >= 80) {
+                iconContainer.className = "w-24 h-24 rounded-full flex items-center justify-center mx-auto text-4xl shadow-inner bg-emerald-100 text-emerald-600";
+                iconContainer.innerHTML = `<i class="fa-solid fa-award"></i>`;
+                resultTitle.textContent = "Outstanding Performance!";
+                resultSubtitle.textContent = "You have mastered 'to be' short forms!";
+                triggerConfetti();
+            } else if (percentage >= 50) {
+                iconContainer.className = "w-24 h-24 rounded-full flex items-center justify-center mx-auto text-4xl shadow-inner bg-sky-100 text-sky-600";
+                iconContainer.innerHTML = `<i class="fa-solid fa-thumbs-up"></i>`;
+                resultTitle.textContent = "Good Effort!";
+                resultSubtitle.textContent = "Keep practicing to get an even higher score!";
+            } else {
+                iconContainer.className = "w-24 h-24 rounded-full flex items-center justify-center mx-auto text-4xl shadow-inner bg-amber-100 text-amber-600";
+                iconContainer.innerHTML = `<i class="fa-solid fa-book-open-reader"></i>`;
+                resultTitle.textContent = "Keep Learning!";
+                resultSubtitle.textContent = "Review the grammar guide and try the quiz again!";
+            }
+        }
+
+        /* --------------------------------------------------
+           EVENT LISTENERS & KEYBOARD SHORTCUTS
+           -------------------------------------------------- */
+        btnStart.addEventListener('click', startQuiz);
+        btnCheck.addEventListener('click', checkAnswer);
+        btnNext.addEventListener('click', nextQuestion);
+        btnRestart.addEventListener('click', startQuiz);
+
+        // Keyboard navigation (Press 1/2/3 or A/B/C to select options, Enter to check/advance)
+        document.addEventListener('keydown', (e) => {
+            // Only handle keyboard inside quiz screen
+            if (quizScreen.classList.contains('hidden')) {
+                if (!startScreen.classList.contains('hidden') && e.key === 'Enter') {
+                    startQuiz();
+                } else if (!resultsScreen.classList.contains('hidden') && e.key === 'Enter') {
+                    startQuiz();
+                }
+                return;
+            }
+
+            const key = e.key.toUpperCase();
+
+            // Option selection shortcuts (1, 2, 3 or A, B, C)
+            if (!isQuestionAnswered) {
+                let targetIndex = -1;
+                if (key === '1' || key === 'A') targetIndex = 0;
+                if (key === '2' || key === 'B') targetIndex = 1;
+                if (key === '3' || key === 'C') targetIndex = 2;
+
+                if (targetIndex !== -1) {
+                    const buttons = optionsContainer.querySelectorAll('button');
+                    if (buttons[targetIndex]) {
+                        buttons[targetIndex].click();
+                    }
+                }
+            }
+
+            // Enter key shortcut
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (!btnNext.classList.contains('hidden')) {
+                    nextQuestion();
+                } else if (!btnCheck.disabled) {
+                    checkAnswer();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
